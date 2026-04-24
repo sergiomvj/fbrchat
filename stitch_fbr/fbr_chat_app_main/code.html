@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dadad8",
+                    "outline": "#707979",
+                    "primary-fixed-dim": "#96d1d6",
+                    "surface-variant": "#e3e2e0",
+                    "on-secondary-fixed": "#002022",
+                    "on-surface-variant": "#404849",
+                    "primary": "#003336",
+                    "secondary": "#006970",
+                    "secondary-container": "#8aeff9",
+                    "on-primary-fixed-variant": "#074f54",
+                    "surface-container-low": "#f4f3f1",
+                    "surface": "#faf9f7",
+                    "on-primary-container": "#7fbabf",
+                    "tertiary-fixed": "#e5e2e3",
+                    "surface-bright": "#faf9f7",
+                    "secondary-fixed-dim": "#6fd6df",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed": "#1b1b1c",
+                    "error-container": "#ffdad6",
+                    "on-background": "#1a1c1b",
+                    "on-primary-fixed": "#002022",
+                    "tertiary-container": "#434344",
+                    "primary-container": "#004b50",
+                    "on-surface": "#1a1c1b",
+                    "inverse-on-surface": "#f1f1ef",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2f3130",
+                    "surface-container-highest": "#e3e2e0",
+                    "on-tertiary-container": "#b2afb0",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#004f54",
+                    "on-secondary-container": "#006e75",
+                    "secondary-fixed": "#8df2fc",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#b1edf2",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#efeeec",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed-dim": "#c8c6c7",
+                    "outline-variant": "#bfc8c9",
+                    "surface-container-high": "#e9e8e6",
+                    "on-tertiary-fixed-variant": "#474647",
+                    "inverse-primary": "#96d1d6",
+                    "background": "#faf9f7",
+                    "surface-tint": "#2a676c",
+                    "tertiary": "#2d2d2e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "sidebar-width": "280px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "gutter": "12px",
+                    "unit": "4px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "xl": "40px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "mono": ["Inter"],
+                    "h2": ["Inter"],
+                    "h1": ["Newsreader"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display": ["Newsreader"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "h2": ["20px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "display": ["42px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .message-gradient-agent {
+            background: linear-gradient(135deg, #003336 0%, #004b50 100%);
+        }
+        .sidebar-mask {
+            mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e5e5e3; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Sidebar Navigation (SideNavBar JSON implementation) -->
+<aside class="w-[280px] h-screen border-r border-[#E5E5E3] bg-[#F2F4F7] flex flex-col py-4 gap-2">
+<div class="px-6 mb-6">
+<h1 class="text-xl font-bold text-[#004B50] tracking-tighter font-['Newsreader']">FBR CHAT</h1>
+<p class="font-['Newsreader'] text-xs tracking-tight text-slate-500">Operational Node 01</p>
+</div>
+<div class="px-4 mb-4">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-slate-400 text-sm">search</span>
+<input class="w-full pl-9 pr-4 py-2 bg-surface-container border-none text-xs rounded-lg focus:ring-1 focus:ring-secondary" placeholder="Search operational grid..." type="text"/>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-2 space-y-6">
+<!-- Groups Section -->
+<div>
+<h3 class="px-4 mb-2 font-label-sm text-[10px] uppercase tracking-widest text-outline">Grupos</h3>
+<div class="space-y-0.5">
+<div class="flex items-center gap-3 px-4 py-2 bg-white border-r-2 border-[#004B50] text-[#004B50] font-bold cursor-pointer transition-colors">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-white text-xs">PV</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="truncate text-sm">Pipeline Vendas</span>
+<span class="text-[10px] font-normal text-slate-400">14:02</span>
+</div>
+<p class="text-[11px] font-normal text-slate-500 truncate">@vendas: Check the lead status...</p>
+</div>
+<div class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">3</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-[#E5E5E3] cursor-pointer transition-colors">
+<div class="w-8 h-8 rounded bg-slate-200 flex items-center justify-center text-slate-500 text-xs">PR</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="truncate text-sm">Produto</span>
+<span class="text-[10px] text-slate-400">Yesterday</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-[#E5E5E3] cursor-pointer transition-colors">
+<div class="w-8 h-8 rounded bg-slate-200 flex items-center justify-center text-slate-500 text-xs">OB</div>
+<div class="flex-1 min-w-0">
+<span class="truncate text-sm">Onboarding</span>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-[#E5E5E3] cursor-pointer transition-colors">
+<div class="w-8 h-8 rounded bg-slate-200 flex items-center justify-center text-slate-500 text-xs">OP</div>
+<div class="flex-1 min-w-0">
+<span class="truncate text-sm">Operação</span>
+</div>
+</div>
+</div>
+</div>
+<!-- PVTs Section -->
+<div>
+<h3 class="px-4 mb-2 font-label-sm text-[10px] uppercase tracking-widest text-outline">PVTs (Agents)</h3>
+<div class="space-y-0.5">
+<div class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-[#E5E5E3] cursor-pointer transition-colors">
+<div class="relative">
+<img alt="" class="w-8 h-8 rounded-full bg-primary" data-alt="professional ai agent avatar minimalist teal and dark blue tones high tech clean geometric shape" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDqRPfw8FMbdVvXqwb-OQbLMrlomYXWAsu8iR-6TExN4K_bxOtMjBRBCQ3bmLbcCql4oolPRgKdiRNXDrYO1jvjOfWKTxyD02FekMtq7fyx6X-SsOLwUu64gFky8zfizob1XlIAmfysIApzS7WyObF-VtocGpuu4h8iDYKBZI2TD8wopegNPcboUzKsWPu1RHzKw_n3mfHdW_Rb5HQqli1Xn2KDqcq7UEX5UKPPjcOMD2HMsf4UF1eh7MvDCc5nW4lKb7J0j1E9Lc"/>
+<div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#F2F4F7] rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<span class="truncate text-sm">Agente de Vendas</span>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-[#E5E5E3] cursor-pointer transition-colors">
+<div class="relative">
+<img alt="" class="w-8 h-8 rounded-full bg-slate-300" data-alt="ai agent avatar rh human resources tech minimalist corporate colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiqedizZ6Ej4zZrwgjIw5CJ8xLRG47VmUQzATnww18Tvd-NAhwK7adfUmbSNdYA--kdcxg4xMXbx7VJgW8JQCJyeZHd6T0EC_6ap3zoMGrezG39Wb04VmSY_oA2ybDlLkw9OAqv67FlHRwp_6J5mNtPnYyol4waYkSKpg8GsavB3q2GUBNTz8DBJLckLBWGx-BE-j7BAJv-cX4EGah62PnwwblOi-DVQ-EuB1-YGEf_VsA7yArsU_7dCRybufk4WNK5pFFZQPL0gA"/>
+<div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-slate-400 border-2 border-[#F2F4F7] rounded-full"></div>
+</div>
+<div class="flex-1 min-w-0">
+<span class="truncate text-sm">Agente RH</span>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full py-2 bg-primary-container text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                    Execute New
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+<!-- Top Bar (TopAppBar JSON implementation) -->
+<header class="h-12 w-full flex items-center justify-between px-6 border-b border-[#E5E5E3] bg-[#F9F8F6] sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="font-h2 text-sm font-bold text-[#004B50]">Pipeline Vendas</span>
+<span class="text-[10px] text-outline uppercase tracking-tighter">Tema: CRM, pipeline e follow-up comercial</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-6">
+<span class="font-['Newsreader'] text-xs font-medium uppercase tracking-widest text-[#004B50] border-b border-[#004B50] cursor-pointer">Thread</span>
+<span class="font-['Newsreader'] text-xs font-medium uppercase tracking-widest text-slate-400 hover:text-[#004B50] cursor-pointer transition-all">Registry</span>
+<span class="font-['Newsreader'] text-xs font-medium uppercase tracking-widest text-slate-400 hover:text-[#004B50] cursor-pointer transition-all">Memory</span>
+<span class="font-['Newsreader'] text-xs font-medium uppercase tracking-widest text-slate-400 hover:text-[#004B50] cursor-pointer transition-all">Telemetry</span>
+</nav>
+<div class="flex items-center gap-3 border-l border-[#E5E5E3] pl-6">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+<span class="font-['Newsreader'] text-xs font-medium uppercase tracking-widest text-[#004B50]">Online</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer text-xl">notifications</span>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer text-xl">help_outline</span>
+</div>
+</div>
+</header>
+<!-- Message List -->
+<div class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6">
+<!-- Date Separator -->
+<div class="flex items-center gap-4 py-2">
+<div class="flex-1 h-px bg-[#E5E5E3]"></div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">Today, October 24</span>
+<div class="flex-1 h-px bg-[#E5E5E3]"></div>
+</div>
+<!-- User Message -->
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                        JD
+                    </div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-bold text-sm text-on-background">João Duarte</span>
+<span class="text-[10px] text-slate-400">13:45</span>
+</div>
+<div class="text-body-md text-on-surface">
+<span class="text-secondary font-medium">@vendas</span> can you check the lead status for the 'Global Tech' account? We need to update the forecast by EOD.
+                        </div>
+</div>
+</div>
+<!-- Agent Message (Technical/Premium) -->
+<div class="flex gap-4 group">
+<div class="relative flex-shrink-0">
+<img alt="" class="w-8 h-8 rounded-lg" data-alt="minimalist vector icon of an ai entity dark teal background modern flat design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc0t8iNqcDk1aKF5AZNiwqyYjfaOQg1qct-ZpPpIKCXHXHbCfvs_jf74fVBOD_tsYI2zmmwsYP7IOjoKSEyKrUJqG3JrY4-K2ADYgecudCmmqOJTEoXXs2So_anZVRHTvXyL8xhtaCxih0vXBAcfhO6dOC-t16celaycnDgnh_Sl0vJuCzloUProQa15SFF0t4T4ndx9P-6mnJX3aQ6gTXIs-obCzajlHPqIzTr2lTz6gkPvIFahyT6op1j8SACD_-0DAUx5nZmlQ"/>
+<div class="absolute -top-1 -right-1 bg-[#004B50] text-[8px] text-white px-1 font-bold rounded">AI</div>
+</div>
+<div class="flex-1 max-w-3xl">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-bold text-sm text-primary">Agente de Vendas</span>
+<span class="text-[10px] bg-primary-container text-white px-1.5 py-0.5 rounded font-mono">SYS-VAL-09</span>
+<span class="text-[10px] text-slate-400">13:46</span>
+</div>
+<div class="p-4 message-gradient-agent text-white rounded-xl rounded-tl-none shadow-sm space-y-3">
+<p class="text-body-md leading-relaxed opacity-95">
+                                Analisando a conta <span class="font-mono text-secondary-fixed">Global Tech</span> no banco de dados operacional. O status atual do lead é <span class="font-mono text-secondary-fixed">PROPOSTA ENVIADA</span>.
+                            </p>
+<ul class="text-xs space-y-1 font-mono opacity-80 border-l border-white/20 pl-3">
+<li>&gt; Probabilidade: 85%</li>
+<li>&gt; Follow-up: Agendado para amanhã (09:00)</li>
+<li>&gt; Responsável: @vendas_core</li>
+</ul>
+<div class="flex items-center gap-2 pt-2 border-t border-white/10">
+<button class="flex items-center gap-1 text-[10px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded transition-colors">
+<span class="material-symbols-outlined text-sm">play_arrow</span>
+                                    PLAYER TTS
+                                </button>
+<button class="flex items-center gap-1 text-[10px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded transition-colors">
+<span class="material-symbols-outlined text-sm">content_copy</span>
+                                    COPY LOG
+                                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Audio Message -->
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                        JD
+                    </div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-bold text-sm text-on-background">João Duarte</span>
+<span class="text-[10px] text-slate-400">13:50</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-container p-3 rounded-lg w-fit border border-[#E5E5E3]">
+<button class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+<div class="flex flex-col gap-1 w-48">
+<div class="flex items-end gap-0.5 h-6">
+<div class="flex-1 bg-primary h-2 rounded-full"></div>
+<div class="flex-1 bg-primary h-4 rounded-full"></div>
+<div class="flex-1 bg-primary h-3 rounded-full"></div>
+<div class="flex-1 bg-primary h-5 rounded-full"></div>
+<div class="flex-1 bg-primary h-4 rounded-full"></div>
+<div class="flex-1 bg-primary h-6 rounded-full"></div>
+<div class="flex-1 bg-outline h-3 rounded-full opacity-30"></div>
+<div class="flex-1 bg-outline h-4 rounded-full opacity-30"></div>
+<div class="flex-1 bg-outline h-2 rounded-full opacity-30"></div>
+<div class="flex-1 bg-outline h-5 rounded-full opacity-30"></div>
+</div>
+<div class="flex justify-between text-[10px] text-slate-400 font-mono">
+<span>0:14</span>
+<span>0:45</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Attachment -->
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                        JD
+                    </div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-bold text-sm text-on-background">João Duarte</span>
+<span class="text-[10px] text-slate-400">13:52</span>
+</div>
+<div class="rounded-xl overflow-hidden border border-[#E5E5E3] w-fit max-w-sm">
+<img alt="" class="w-full h-auto" data-alt="modern cm dashboard screenshot with sales pipeline charts dark mode high fidelity ui design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDOgDOxYSO8KDIC_JuJTZgTYC9c30RnMl3D_Bg4R7uox7Uc6_3n6rsThib-ynhCTzV8U4Y5B89eyQU3rE-L36JeVB0XV7LmmJxSJRi5-nK-37QYkfuyw2KKByUGdTNOjB3_Vt6OjGq23iyHErnghMjV8nnHjqfUdYQ82PgLHdeen9WUphzHO9jLXq5BEydVDBIUUyDWSHzN3LhrRpzvPYI0kU1aQkZIVgvE1m0P1g2hBgKa62gzRG69IM2lY7QanbDbeBXoA54rqA"/>
+<div class="p-3 bg-white flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-xs font-bold text-on-surface">Pipeline_View_Q4.png</span>
+<span class="text-[10px] text-slate-400">1.2 MB • Image</span>
+</div>
+<button class="p-1.5 hover:bg-slate-100 rounded">
+<span class="material-symbols-outlined text-slate-500">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Failed Message -->
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-xs font-bold text-primary flex-shrink-0">
+                        JD
+                    </div>
+<div class="flex-1">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-bold text-sm text-on-background opacity-50">João Duarte</span>
+<span class="text-[10px] text-slate-400">13:55</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-body-md text-on-surface opacity-50">This message failed to sync with the operational node.</span>
+<span class="material-symbols-outlined text-error text-sm">error</span>
+<button class="text-[10px] font-bold text-primary hover:underline uppercase tracking-tighter">Retry</button>
+</div>
+</div>
+</div>
+<!-- Agent Typing -->
+<div class="flex gap-4 items-center">
+<div class="relative flex-shrink-0">
+<img alt="" class="w-8 h-8 rounded-lg opacity-60" data-alt="minimalist vector icon of an ai entity dark teal background modern flat design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeS7h5-PF6kJlEwjI5nZLvJY8eWwfYcxLSsZjz7QYxQM2SclF71Zt84V_JIpVRPfCzH2b8xjqavccve8OpqSlwE60AvTPzS6g5jBkNrOdC4tX1ra-Os_dmHmQwLKnpVa-lIoCCroLagqOs5ytX6nvx-YyCeBG2DPkhV94ZW2gzB1haUaBGwfiNPy1UZEZIBRFWnqN1bjCr_gc46zZgFyiuYwn8-uTE84xV3vgoZAehQva0tvzl8RM51v9Tn2adbilT6JRqFetwe-k"/>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold text-primary italic">Agente de Vendas is generating response</span>
+<div class="flex gap-1">
+<div class="w-1 h-1 bg-primary rounded-full animate-pulse"></div>
+<div class="w-1 h-1 bg-primary rounded-full animate-pulse [animation-delay:0.2s]"></div>
+<div class="w-1 h-1 bg-primary rounded-full animate-pulse [animation-delay:0.4s]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<footer class="p-6 pt-2">
+<div class="bg-white border border-[#E5E5E3] rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-secondary/20 transition-all">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-sm p-4 h-24 resize-none placeholder:text-slate-400" placeholder="Type your instruction or message..."></textarea>
+<div class="flex items-center justify-between px-4 py-3 border-t border-[#F2F4F7]">
+<div class="flex items-center gap-4">
+<button class="text-slate-400 hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xl">attach_file</span>
+</button>
+<button class="text-slate-400 hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xl">mic</span>
+</button>
+<div class="w-px h-4 bg-[#E5E5E3]"></div>
+<button class="text-slate-400 hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xl">alternate_email</span>
+</button>
+<button class="text-slate-400 hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-xl">sentiment_satisfied</span>
+</button>
+</div>
+<button class="bg-primary text-white px-4 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-primary-container transition-all">
+<span>Execute</span>
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</footer>
+</main>
+<!-- Right Side Panel -->
+<aside class="hidden xl:flex w-[300px] bg-[#F9F8F6] border-l border-[#E5E5E3] flex-col p-6 overflow-y-auto">
+<h2 class="font-['Newsreader'] text-lg font-bold text-primary mb-6">Conversation Intelligence</h2>
+<div class="space-y-8">
+<!-- Context -->
+<section>
+<h3 class="font-label-sm text-[10px] uppercase tracking-widest text-outline mb-3">Operational Context</h3>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-500">Lead Score Avg:</span>
+<span class="font-mono font-bold text-primary">78.4</span>
+</div>
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-500">Velocity (Days):</span>
+<span class="font-mono font-bold text-primary">12.5</span>
+</div>
+<div class="h-1 w-full bg-slate-200 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[70%]"></div>
+</div>
+</div>
+</section>
+<!-- Active Members -->
+<section>
+<h3 class="font-label-sm text-[10px] uppercase tracking-widest text-outline mb-4">Active Nodes (4)</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container text-white flex items-center justify-center text-[10px] font-bold">JD</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">João Duarte</p>
+<p class="text-[10px] text-slate-400">Head of Operations</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<img alt="" class="w-8 h-8 rounded-lg" data-alt="minimalist vector icon of an ai entity dark teal background modern flat design" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHg-TILSxvu0E0f1iy_oikVAZw3LIhH4SEXWo7cxB1t-pTYSwU3u4OlUeiSruOlTRAgwtLxJKbApfvycz720yE1OpYCRVDe_swODevkbmS2OsDZMw2DFow0QFaA9nbWiE788v9Vlg5JsXQkGYOWaC4kBB3tiFv59nhEYKI_HWyJFo-Vo4fq-FHykoFGTUANxzQnRYLoF5flEC4wu-1JW87YbIqZdKhXB6KiqhP6JdluN2PQS6szPjdGeoxIqm8TLqhioz5oTB3wtk"/>
+<div class="flex-1">
+<p class="text-xs font-bold text-primary">Agente de Vendas</p>
+<p class="text-[10px] text-green-600 font-bold uppercase tracking-tighter">Automated Agent</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-container-high text-primary flex items-center justify-center text-[10px] font-bold">MA</div>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-surface">Maria Alves</p>
+<p class="text-[10px] text-slate-400">Sales Specialist</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Agent Details -->
+<section class="bg-white p-4 rounded-xl border border-[#E5E5E3]">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+<h3 class="text-xs font-bold text-primary">Agent Knowledge Base</h3>
+</div>
+<p class="text-[11px] text-slate-500 mb-4 italic">Using Model: Claude-3.5-Sonnet-Prime. Connected to CRM-Gateway v2.1</p>
+<div class="space-y-2">
+<button class="w-full text-left p-2 hover:bg-[#F9F8F6] rounded text-[10px] font-bold text-primary border border-transparent hover:border-[#E5E5E3] transition-all">
+                            VIEW LAST TRAINING SESSION
+                        </button>
+<button class="w-full text-left p-2 hover:bg-[#F9F8F6] rounded text-[10px] font-bold text-primary border border-transparent hover:border-[#E5E5E3] transition-all">
+                            SYNC PIPELINE DATA
+                        </button>
+</div>
+</section>
+</div>
+</aside>
+</div>
+</body></html>

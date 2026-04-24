@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FBR CHAT — PRD + Spec Técnica v1.0</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #22D3EE; --brand-dim: rgba(34,211,238,0.18); --brand-faint: rgba(34,211,238,0.06);
+      --accent: #6366F1; --accent-dim: rgba(99,102,241,0.18); --accent-faint: rgba(99,102,241,0.06);
+      --mem: #A78BFA; --mem-dim: rgba(167,139,250,0.18); --mem-faint: rgba(167,139,250,0.06);
+      --grn: #34D399; --grn-dim: rgba(52,211,153,0.18); --grn-faint: rgba(52,211,153,0.05);
+      --pvt: #F472B6; --pvt-dim: rgba(244,114,182,0.18); --pvt-faint: rgba(244,114,182,0.05);
+      --amb: #FBBF24; --amb-dim: rgba(251,191,36,0.18); --amb-faint: rgba(251,191,36,0.05);
+      --red: #F87171;
+      --dark: #07090F; --dark-2: #0C0F1C; --dark-3: #111528; --dark-4: #191E36; --dark-5: #222845;
+      --slate: #7278A0; --slate-light: #A0A8CC; --white: #EDF0FF;
+      --grid: rgba(34,211,238,0.04);
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--dark); color: var(--white); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.75; overflow-x: hidden; }
+    .grid-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px); background-size: 52px 52px; }
+    .glow-a { position: fixed; top: -20vh; left: -10vw; width: 70vw; height: 70vh; background: radial-gradient(ellipse,rgba(34,211,238,0.07) 0%,transparent 65%); pointer-events: none; z-index: 0; }
+    .glow-b { position: fixed; bottom: -20vh; right: -10vw; width: 70vw; height: 70vh; background: radial-gradient(ellipse,rgba(99,102,241,0.06) 0%,transparent 65%); pointer-events: none; z-index: 0; }
+    .wrap { position: relative; z-index: 1; max-width: 1020px; margin: 0 auto; padding: 0 2rem; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: .85rem 2rem; background: rgba(7,9,15,0.9); backdrop-filter: blur(20px); border-bottom: 1px solid var(--grid); display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1rem; letter-spacing: -.04em; }
+    .nav-logo span { color: var(--brand); }
+    .nav-badge { font-family: 'JetBrains Mono', monospace; font-size: .55rem; letter-spacing: .12em; color: var(--brand); background: var(--brand-faint); border: 1px solid rgba(34,211,238,0.22); padding: .15rem .55rem; border-radius: 99px; margin-left: .5rem; }
+    .nav-links { display: flex; gap: 1.2rem; list-style: none; }
+    .nav-links a { font-size: .65rem; color: var(--slate); text-decoration: none; font-family: 'JetBrains Mono', monospace; transition: color .2s; }
+    .nav-links a:hover { color: var(--white); }
+    @media(max-width:720px){ .nav-links { display: none; } }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 9rem 0 6rem; border-bottom: 1px solid var(--grid); }
+    .eyebrow { display: inline-flex; align-items: center; gap: .5rem; font-family: 'JetBrains Mono', monospace; font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: var(--brand); border: 1px solid rgba(34,211,238,0.22); background: var(--brand-faint); padding: .35rem .9rem; border-radius: 99px; margin-bottom: 2.5rem; animation: fu .7s ease both; }
+    .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 8px var(--brand); animation: pulse 2.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.2} }
+    @keyframes fu { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    .hero-title { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(2.5rem,8vw,5.2rem); line-height: .95; letter-spacing: -.04em; animation: fu .8s .1s ease both; }
+    .hero-title .c { color: var(--brand); }
+    .hero-title .m { color: var(--slate); }
+    .hero-sub { margin-top: 2rem; font-size: 1rem; color: var(--slate-light); max-width: 620px; font-weight: 300; line-height: 1.9; animation: fu .8s .2s ease both; }
+    .hero-sub strong { color: var(--white); font-weight: 500; }
+    .hero-meta { margin-top: 2.5rem; display: flex; flex-wrap: wrap; gap: .8rem; animation: fu .8s .3s ease both; }
+    .hmeta { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--slate); padding: .38rem .9rem; border: 1px solid var(--dark-4); border-radius: 7px; background: rgba(255,255,255,0.015); }
+    .hmeta.hi { border-color: var(--brand-dim); color: var(--brand); background: var(--brand-faint); }
+
+    /* SECTIONS */
+    section { padding: 6rem 0; border-bottom: 1px solid var(--grid); }
+    .stag { font-family: 'JetBrains Mono', monospace; font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: var(--brand); margin-bottom: .9rem; }
+    .stag.mem { color: var(--mem); } .stag.grn { color: var(--grn); } .stag.pvt { color: var(--pvt); } .stag.acc { color: var(--accent); } .stag.amb { color: var(--amb); }
+    .stitle { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: clamp(1.8rem,4vw,2.6rem); line-height: 1.1; letter-spacing: -.03em; color: var(--white); margin-bottom: 1rem; }
+    .slead { font-size: .95rem; color: var(--slate-light); max-width: 640px; font-weight: 300; margin-bottom: 3rem; line-height: 1.85; }
+    .slead strong { color: var(--white); font-weight: 500; }
+    .fade-in { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* CODE BLOCKS */
+    .code-wrap { background: var(--dark-3); border: 1px solid var(--dark-5); border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; }
+    .code-header { padding: .6rem 1.2rem; background: var(--dark-4); border-bottom: 1px solid var(--dark-5); display: flex; align-items: center; gap: .6rem; }
+    .code-title { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--slate); }
+    .code-lang { font-family: 'JetBrains Mono', monospace; font-size: .58rem; color: var(--brand); background: var(--brand-faint); border: 1px solid var(--brand-dim); padding: .1rem .5rem; border-radius: 4px; margin-left: auto; }
+    .code-body { padding: 1.4rem 1.6rem; overflow-x: auto; }
+    .code-body pre { font-family: 'JetBrains Mono', monospace; font-size: .75rem; line-height: 1.7; color: var(--slate-light); white-space: pre; }
+    .code-body pre .cmt { color: var(--slate); }
+    .code-body pre .key { color: var(--brand); }
+    .code-body pre .val { color: var(--grn); }
+    .code-body pre .str { color: var(--pvt); }
+    .code-body pre .kw  { color: var(--accent); }
+    .code-body pre .fn  { color: var(--mem); }
+
+    /* DATA TABLE */
+    .dtable { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; margin-bottom: 2rem; border: 1px solid var(--dark-4); }
+    .dtable th { background: var(--dark-4); padding: .7rem 1.1rem; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: var(--slate); font-weight: 500; }
+    .dtable td { padding: .8rem 1.1rem; font-size: .82rem; color: var(--slate-light); border-top: 1px solid var(--dark-4); }
+    .dtable tr:hover td { background: rgba(255,255,255,0.01); }
+    .dtable td:first-child { font-family: 'JetBrains Mono', monospace; font-size: .73rem; color: var(--white); }
+    .chip { font-family: 'JetBrains Mono', monospace; font-size: .58rem; padding: .14rem .5rem; border-radius: 99px; margin-right: .3rem; display: inline-block; }
+    .chip-b { background: var(--brand-faint); color: var(--brand); border: 1px solid var(--brand-dim); }
+    .chip-g { background: var(--grn-faint); color: var(--grn); border: 1px solid var(--grn-dim); }
+    .chip-m { background: var(--mem-faint); color: var(--mem); border: 1px solid var(--mem-dim); }
+    .chip-p { background: var(--pvt-faint); color: var(--pvt); border: 1px solid var(--pvt-dim); }
+    .chip-a { background: var(--accent-faint); color: var(--accent); border: 1px solid var(--accent-dim); }
+
+    /* WARN */
+    .warn { display: flex; gap: 1.1rem; align-items: flex-start; padding: 1.3rem 1.5rem; border-radius: 11px; border: 1px solid var(--brand-dim); background: var(--brand-faint); margin-bottom: 1.8rem; }
+    .warn-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .warn-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .92rem; color: var(--brand); margin-bottom: .35rem; }
+    .warn-body { font-size: .8rem; color: var(--slate-light); line-height: 1.7; }
+    .warn-body strong { color: var(--white); }
+
+    /* MODULE CARDS */
+    .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 2.5rem; }
+    @media(max-width:680px){ .mod-grid { grid-template-columns: 1fr; } }
+    .mod { border-radius: 14px; border: 1px solid var(--dark-4); background: rgba(255,255,255,0.015); overflow: hidden; transition: all .25s; }
+    .mod:hover { border-color: var(--brand-dim); }
+    .mod-header { padding: .8rem 1.4rem; border-bottom: 1px solid var(--dark-4); background: var(--dark-3); display: flex; align-items: center; gap: .7rem; }
+    .mod-num { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--brand); }
+    .mod-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: .92rem; color: var(--white); }
+    .mod-body { padding: 1.2rem 1.4rem; }
+    .mod-desc { font-size: .8rem; color: var(--slate-light); line-height: 1.7; margin-bottom: .9rem; }
+    .checklist { display: flex; flex-direction: column; gap: .35rem; }
+    .ci { display: flex; align-items: flex-start; gap: .6rem; font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--slate-light); }
+    .ci-box { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--dark-5); flex-shrink: 0; margin-top: 1px; background: rgba(255,255,255,0.02); }
+
+    /* TASK CARDS */
+    .task { border-radius: 14px; border: 1px solid var(--dark-4); background: rgba(255,255,255,0.015); overflow: hidden; margin-bottom: 1.2rem; transition: all .25s; }
+    .task:hover { border-color: rgba(34,211,238,0.15); }
+    .task-header { padding: .9rem 1.5rem; border-bottom: 1px solid var(--dark-4); background: var(--dark-3); display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+    .task-id { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--slate); }
+    .task-agent { font-family: 'JetBrains Mono', monospace; font-size: .6rem; padding: .15rem .6rem; border-radius: 99px; }
+    .agent-david   { background: var(--accent-faint); color: var(--accent); border: 1px solid var(--accent-dim); }
+    .agent-chiara  { background: var(--pvt-faint); color: var(--pvt); border: 1px solid var(--pvt-dim); }
+    .agent-erick   { background: var(--amb-faint); color: var(--amb); border: 1px solid var(--amb-dim); }
+    .agent-gabe    { background: var(--grn-faint); color: var(--grn); border: 1px solid var(--grn-dim); }
+    .task-prio { font-family: 'JetBrains Mono', monospace; font-size: .6rem; padding: .15rem .6rem; border-radius: 99px; margin-left: auto; }
+    .prio-high   { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
+    .prio-normal { background: var(--amb-faint); color: var(--amb); border: 1px solid var(--amb-dim); }
+    .task-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; color: var(--white); padding: 1.2rem 1.5rem .5rem; }
+    .task-body { padding: 0 1.5rem 1.3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:600px){ .task-body { grid-template-columns: 1fr; } }
+    .task-field-label { font-family: 'JetBrains Mono', monospace; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--slate); margin-bottom: .35rem; }
+    .task-field-val { font-size: .79rem; color: var(--slate-light); line-height: 1.65; }
+    .task-field-val strong { color: var(--white); }
+    .task-done { padding: .9rem 1.5rem; border-top: 1px solid var(--dark-4); background: var(--dark-3); }
+    .task-done-label { font-family: 'JetBrains Mono', monospace; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--grn); margin-bottom: .4rem; }
+    .task-done-val { font-size: .78rem; color: var(--slate-light); line-height: 1.6; }
+
+    /* SPRINT HEADER */
+    .sprint-head { display: flex; align-items: center; gap: 1rem; padding: 1.2rem 1.5rem; border-radius: 12px; border: 1px solid var(--brand-dim); background: var(--brand-faint); margin-bottom: 2rem; }
+    .sprint-num { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--brand); letter-spacing: .15em; }
+    .sprint-title { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--white); }
+    .sprint-sub { font-size: .78rem; color: var(--slate-light); margin-top: .2rem; }
+    .sprint-cot { background: var(--dark-3); border: 1px solid var(--dark-5); border-left: 3px solid var(--brand); border-radius: 8px; padding: 1rem 1.3rem; margin-bottom: 1.8rem; font-size: .8rem; color: var(--slate-light); line-height: 1.7; font-style: italic; }
+    .sprint-cot strong { color: var(--brand); font-style: normal; }
+
+    /* DEP MAP */
+    .dep-block { background: var(--dark-3); border: 1px solid var(--dark-4); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .dep-block pre { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--slate-light); line-height: 1.9; white-space: pre-wrap; }
+    .dep-block pre .hl { color: var(--brand); }
+
+    /* FOOTER */
+    footer { padding: 3rem 0; }
+    .ft { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; }
+    .ft-brand { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.2rem; letter-spacing: -.04em; }
+    .ft-brand span { color: var(--brand); }
+    .ft-meta { font-family: 'JetBrains Mono', monospace; font-size: .63rem; color: var(--slate); line-height: 1.8; text-align: right; }
+
+    /* PHASE BADGE */
+    .phase-badge { display: inline-flex; align-items: center; gap: .5rem; font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--mem); background: var(--mem-faint); border: 1px solid var(--mem-dim); padding: .3rem .8rem; border-radius: 99px; margin-bottom: 1.5rem; }
+    .phase-badge.p1 { color: var(--brand); background: var(--brand-faint); border-color: var(--brand-dim); }
+    .phase-badge.p3 { color: var(--grn); background: var(--grn-faint); border-color: var(--grn-dim); }
+
+    /* SUMMARY GRID */
+    .sum-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 3rem; }
+    @media(max-width:640px){ .sum-grid { grid-template-columns: 1fr 1fr; } }
+    .sum-card { padding: 1.3rem; border-radius: 12px; border: 1px solid var(--dark-4); background: rgba(255,255,255,0.015); text-align: center; }
+    .sum-num { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 2rem; letter-spacing: -.04em; }
+    .sum-num.b { color: var(--brand); } .sum-num.g { color: var(--grn); } .sum-num.m { color: var(--mem); } .sum-num.a { color: var(--amb); }
+    .sum-label { font-family: 'JetBrains Mono', monospace; font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--slate); margin-top: .2rem; }
+  </style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="glow-a"></div>
+<div class="glow-b"></div>
+
+<nav>
+  <div><span class="nav-logo">FBR<span>·</span>CHAT</span><span class="nav-badge">PRD v1.0</span></div>
+  <ul class="nav-links">
+    <li><a href="#visao">// visão</a></li>
+    <li><a href="#arquitetura">// arquitetura</a></li>
+    <li><a href="#fase1">// fase 1</a></li>
+    <li><a href="#fase2">// fase 2</a></li>
+    <li><a href="#fase3">// fase 3</a></li>
+    <li><a href="#tasklist">// tasklist</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow"><div class="pulse"></div>Product Requirements Document · Abril 2026</div>
+    <h1 class="hero-title">FBR<br><span class="c">CHAT</span><br><span class="m">PRD + Spec</span></h1>
+    <p class="hero-sub">
+      Especificação técnica completa da plataforma de mensageria com agentes virtuais — do modelo de dados aos critérios de aceite, dos contratos de interface às tarefas atômicas prontas para delegação.
+    </p>
+    <div class="hero-meta">
+      <span class="hmeta hi">27 Tarefas · 7 Sprints</span>
+      <span class="hmeta">24 Semanas · 3 Fases</span>
+      <span class="hmeta">4 Agentes ARVA</span>
+      <span class="hmeta">~R$200/mês operacional</span>
+      <span class="hmeta">KVM 8GB · Self-hosted</span>
+    </div>
+  </section>
+
+  <!-- VISÃO -->
+  <section id="visao" class="fade-in">
+    <div class="stag">// visão geral do produto</div>
+    <h2 class="stitle">O que estamos construindo</h2>
+    <p class="slead">Plataforma proprietária de chat sem limites de agentes, com memória contextual persistente e cada agente com seu próprio modelo LLM via OpenClaw. <strong>Sem dependência de plataformas comerciais.</strong></p>
+
+    <div class="sum-grid">
+      <div class="sum-card"><div class="sum-num b">∞</div><div class="sum-label">Agentes</div></div>
+      <div class="sum-card"><div class="sum-num g">100</div><div class="sum-label">Usuários Fase 1</div></div>
+      <div class="sum-card"><div class="sum-num m">2</div><div class="sum-label">Arquivos de Memória</div></div>
+      <div class="sum-card"><div class="sum-num a">24</div><div class="sum-label">Semanas total</div></div>
+    </div>
+
+    <div class="warn">
+      <div class="warn-icon">🚫</div>
+      <div>
+        <div class="warn-title">Fora do Escopo — Não construir</div>
+        <div class="warn-body">Chamadas de vídeo (continuam via WhatsApp) · LLMs rodando localmente · WebRTC / streaming de vídeo em tempo real · App mobile nativo (Fases 1 e 2 são web only) · Cadastro público de usuários</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARQUITETURA -->
+  <section id="arquitetura" class="fade-in">
+    <div class="stag acc">// arquitetura técnica</div>
+    <h2 class="stitle">Stack & Modelo de Dados</h2>
+    <p class="slead">Backend intencionalmente leve — <strong>apenas roteamento</strong>. Zero processamento de LLM local. Tudo roda no KVM de 8GB com Docker Compose.</p>
+
+    <table class="dtable">
+      <thead><tr><th>Camada</th><th>Tecnologia</th><th>Versão</th><th>Justificativa</th></tr></thead>
+      <tbody>
+        <tr><td>Frontend</td><td><span class="chip chip-b">React 18</span><span class="chip chip-b">Socket.io 4</span></td><td>18 / 4.x</td><td>Tempo real nativo, ecossistema maduro</td></tr>
+        <tr><td>Backend API</td><td><span class="chip chip-b">Node.js</span> ou <span class="chip chip-b">FastAPI</span></td><td>Node 20 / Py 3.11</td><td>Leve — só roteamento, sem LLM</td></tr>
+        <tr><td>Banco de dados</td><td><span class="chip chip-g">PostgreSQL 15</span><span class="chip chip-g">Redis 7</span></td><td>15+ / 7+</td><td>Mensagens persistentes + cache de sessões</td></tr>
+        <tr><td>Storage</td><td><span class="chip chip-g">MinIO</span></td><td>RELEASE.2024</td><td>Self-hosted, sem custo de cloud storage</td></tr>
+        <tr><td>Memória</td><td><span class="chip chip-m">MEMORY.md</span><span class="chip chip-m">HISTORY.md</span></td><td>—</td><td>Arquivos por usuário — legíveis, editáveis</td></tr>
+        <tr><td>LLMs</td><td><span class="chip chip-b">OpenClaw por agente</span></td><td>Config</td><td>Modelo customizado por agente</td></tr>
+        <tr><td>TTS</td><td><span class="chip chip-g">ElevenLabs</span><span class="chip chip-g">Google TTS</span></td><td>API v1</td><td>Qualidade e custo equilibrados</td></tr>
+        <tr><td>STT</td><td><span class="chip chip-g">Whisper API</span></td><td>v1</td><td>$0.006/min, alta precisão em PT</td></tr>
+        <tr><td>Proxy / SSL</td><td><span class="chip chip-b">Nginx 1.25</span></td><td>1.25+</td><td>Reverse proxy + SSL termination</td></tr>
+        <tr><td>Containers</td><td><span class="chip chip-b">Docker Compose</span></td><td>Docker 24</td><td>Isolamento, reprodutibilidade, rollback</td></tr>
+      </tbody>
+    </table>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-title">Modelo de Dados Principal · PostgreSQL DDL (simplificado)</span><span class="code-lang">SQL</span></div>
+      <div class="code-body"><pre><span class="cmt">-- Tabelas principais do FBR CHAT</span>
+
+<span class="kw">CREATE TABLE</span> <span class="fn">users</span> (
+  id            UUID <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  name          <span class="key">VARCHAR</span>(100) <span class="kw">NOT NULL</span>,
+  email         <span class="key">VARCHAR</span>(200) <span class="kw">UNIQUE NOT NULL</span>,
+  password_hash <span class="key">VARCHAR</span>(255) <span class="kw">NOT NULL</span>,
+  role          <span class="key">VARCHAR</span>(10) <span class="kw">DEFAULT</span> <span class="str">'user'</span>,  <span class="cmt">-- 'user' | 'admin'</span>
+  last_seen     TIMESTAMPTZ
+);
+
+<span class="kw">CREATE TABLE</span> <span class="fn">agents</span> (
+  id               UUID <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  name             <span class="key">VARCHAR</span>(100) <span class="kw">NOT NULL</span>,
+  slug             <span class="key">VARCHAR</span>(50) <span class="kw">UNIQUE NOT NULL</span>,
+  openclaw_config  JSONB <span class="kw">NOT NULL</span>,  <span class="cmt">-- model, system_prompt, temperature, max_tokens</span>
+  tts_enabled      <span class="key">BOOLEAN DEFAULT</span> <span class="kw">FALSE</span>,
+  tts_voice_id     <span class="key">VARCHAR</span>(100),
+  is_active        <span class="key">BOOLEAN DEFAULT</span> <span class="kw">TRUE</span>
+);
+
+<span class="kw">CREATE TABLE</span> <span class="fn">messages</span> (
+  id                UUID <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  conversation_id   UUID <span class="kw">NOT NULL</span>,
+  conversation_type <span class="key">VARCHAR</span>(5) <span class="kw">CHECK</span> (conversation_type <span class="kw">IN</span> (<span class="str">'group'</span>, <span class="str">'pvt'</span>)),
+  sender_type       <span class="key">VARCHAR</span>(10) <span class="kw">CHECK</span> (sender_type <span class="kw">IN</span> (<span class="str">'user'</span>, <span class="str">'agent'</span>)),
+  sender_id         UUID <span class="kw">NOT NULL</span>,
+  content           TEXT,         <span class="cmt">-- texto ou transcrição STT</span>
+  media_url         TEXT,         <span class="cmt">-- URL MinIO para áudio/vídeo/imagem</span>
+  media_type        <span class="key">VARCHAR</span>(20),  <span class="cmt">-- 'audio' | 'video' | 'image'</span>
+  tts_audio_url     TEXT,         <span class="cmt">-- URL do áudio TTS gerado (agentes)</span>
+  created_at        TIMESTAMPTZ <span class="kw">DEFAULT NOW</span>()
+);</pre></div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-title">Estrutura de Diretórios do Projeto</span><span class="code-lang">SHELL</span></div>
+      <div class="code-body"><pre>fbr-chat/
+├── frontend/           <span class="cmt"># React 18 + Socket.io-client</span>
+├── backend/            <span class="cmt"># API REST + WebSocket server</span>
+│   ├── src/
+│   │   ├── routes/     <span class="cmt"># auth, groups, pvt, upload, admin</span>
+│   │   ├── socket/     <span class="cmt"># handlers de WebSocket</span>
+│   │   └── services/   <span class="cmt"># openclaw, tts, stt, context_router</span>
+│   └── tests/
+├── orchestrator/       <span class="cmt"># Worker de memória (processo independente)</span>
+│   └── src/workers/    <span class="cmt"># memory_worker, history_worker, summarizer</span>
+├── memoria/            <span class="cmt"># Arquivos de memória por usuário</span>
+│   └── usuarios/
+│       └── {user_id}/
+│           ├── MEMORY.md   <span class="cmt">← o que o user disse nos grupos</span>
+│           └── HISTORY.md  <span class="cmt">← histórico de PVTs (privado)</span>
+├── nginx/              <span class="cmt"># Config do proxy reverso</span>
+├── docs/               <span class="cmt"># DEPLOY.md, BACKUP.md, RUNBOOK.md</span>
+└── docker-compose.yml</pre></div>
+    </div>
+  </section>
+
+  <!-- FASE 1 -->
+  <section id="fase1" class="fade-in">
+    <div class="phase-badge p1">// Fase 1 · Semanas 1–8</div>
+    <div class="stag">// módulos e critérios de aceite</div>
+    <h2 class="stitle">MVP — Interface + Roteamento de Agentes</h2>
+    <p class="slead">Sistema funcional para validação com primeiros usuários. <strong>Texto em tempo real, grupos, PVT, agentes respondendo via OpenClaw.</strong></p>
+
+    <div class="mod-grid">
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.1</span><span class="mod-name">Autenticação JWT</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Login email/senha com access token 24h, refresh token 30d com rotação, rate limiting 5 tentativas/min/IP, bcrypt salt 12.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Login retorna JWT válido</div>
+            <div class="ci"><div class="ci-box"></div>Access token expira em 24h</div>
+            <div class="ci"><div class="ci-box"></div>Refresh token invalida após uso</div>
+            <div class="ci"><div class="ci-box"></div>Rate limit ativo após 5 falhas</div>
+            <div class="ci"><div class="ci-box"></div>Senha armazenada com bcrypt ≥12</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.2</span><span class="mod-name">Admin CRUD</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Gestão de usuários e agentes por admins. Sem cadastro público. Validação da openclaw_config (model + system_prompt obrigatórios). Soft delete.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Role 'user' retorna 403 em /admin</div>
+            <div class="ci"><div class="ci-box"></div>Email duplicado rejeitado</div>
+            <div class="ci"><div class="ci-box"></div>openclaw_config validado</div>
+            <div class="ci"><div class="ci-box"></div>Deleção é soft (is_active=false)</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.3</span><span class="mod-name">Grupos + Membros</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Grupos temáticos com humanos e agentes. Paginação cursor-based no histórico. Campo topic usado pelo orquestrador (Fase 2).</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Usuário só vê grupos dos quais é membro</div>
+            <div class="ci"><div class="ci-box"></div>Histórico cursor-based (não offset)</div>
+            <div class="ci"><div class="ci-box"></div>Admin pode adicionar agentes ao grupo</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.4</span><span class="mod-name">PVT — Conversas Privadas</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">1-a-1 entre usuário↔usuário ou usuário↔agente. POST /pvt é idempotente — dois POSTs retornam mesmo pvt_id.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>POST idempotente confirmado</div>
+            <div class="ci"><div class="ci-box"></div>Isolamento de dados validado</div>
+            <div class="ci"><div class="ci-box"></div>Lista ordenada por last_message_at</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.5</span><span class="mod-name">WebSocket + OpenClaw</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Núcleo de entrega em tempo real. Mensagem persistida ANTES de entregue. Debounce 3s, timeout 10s, agent_typing, reconexão automática.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Entrega em < 500ms com 30 conexões</div>
+            <div class="ci"><div class="ci-box"></div>Timeout 10s gera erro no chat</div>
+            <div class="ci"><div class="ci-box"></div>Debounce agrupa mensagens rápidas</div>
+            <div class="ci"><div class="ci-box"></div>Reconexão com exponential backoff</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">1.6 · 1.7</span><span class="mod-name">Upload + Frontend React</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Upload MIME real (não só extensão). Limites por tipo. Frontend estilo Telegram com lista virtualizada, scroll inteligente, UX de erro com reenvio.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>MIME forjado rejeitado com 415</div>
+            <div class="ci"><div class="ci-box"></div>500 mensagens sem frame drops</div>
+            <div class="ci"><div class="ci-box"></div>Scroll lock quando usuário rolou</div>
+            <div class="ci"><div class="ci-box"></div>Lighthouse Performance ≥ 80</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-title">Fluxo WebSocket — Mensagem com Agente em Grupo</span><span class="code-lang">FLOW</span></div>
+      <div class="code-body"><pre><span class="val">1.</span> Usuário emite <span class="key">send_message</span> { room_type: 'group', room_id, content }
+<span class="val">2.</span> Backend <span class="fn">persiste</span> a mensagem no PostgreSQL (ANTES de entregar)
+<span class="val">3.</span> Backend emite <span class="key">message_received</span> para todos os membros conectados
+<span class="val">4.</span> Backend verifica se agente é membro do grupo
+<span class="val">5.</span> Se sim:
+   a. Emite <span class="key">agent_typing</span> → indicador "..." aparece para todos
+   b. Aguarda debounce de 3s (agrupa mensagens consecutivas do user)
+   c. Busca últimas 20 mensagens do grupo como contexto
+   d. Chama <span class="fn">callOpenClaw</span>(agent, messages) com timeout de 10s
+   e. Se timeout: emite <span class="str">message_received</span> com erro legível
+   f. Se sucesso: persiste e emite <span class="key">message_received</span> sender_type='agent'
+   g. Emite <span class="key">agent_done_typing</span>
+<span class="val">6.</span> Se agente tem tts_enabled:
+   a. Chama ElevenLabs TTS de forma assíncrona
+   b. Salva MP3 no MinIO
+   c. Emite <span class="key">message_updated</span> { message_id, tts_audio_url }</pre></div>
+    </div>
+  </section>
+
+  <!-- FASE 2 -->
+  <section id="fase2" class="fade-in">
+    <div class="phase-badge">// Fase 2 · Semanas 9–16</div>
+    <div class="stag mem">// memória contextual + voz</div>
+    <h2 class="stitle">MEMORY.md + HISTORY.md + STT + TTS</h2>
+    <p class="slead">O diferencial real do FBR CHAT. Agentes que lembram — de verdade. <strong>Contexto do grupo injetado automaticamente no PVT, filtrado por tema.</strong></p>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-title">Estrutura MEMORY.md — Gerado pelo Orquestrador</span><span class="code-lang">MARKDOWN</span></div>
+      <div class="code-body"><pre><span class="cmt"># Memória de {user_name} — Grupos</span>
+
+<span class="cmt">## Grupo: Vendas | Topic: pipeline comercial</span>
+<span class="key">_Última atualização: 2026-04-22T14:30:00Z_</span>
+
+<span class="kw">### Decisões e posições</span>
+- [2026-04-20] Confirmou interesse em migrar para o novo sistema de CRM
+- [2026-04-15] Decidiu priorizar leads do segmento enterprise
+
+<span class="kw">### Perguntas frequentes</span>
+- [2026-04-18] Perguntou sobre prazo de entrega do módulo de relatórios
+
+<span class="kw">### Informações compartilhadas</span>
+- [2026-04-10] Mencionou que sua equipe tem 8 pessoas
+
+<span class="kw">### Tom e preferências</span>
+- Prefere respostas objetivas e com exemplos práticos</pre></div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-title">ContextRouter.build_pvt_context() — Algoritmo Completo</span><span class="code-lang">PYTHON</span></div>
+      <div class="code-body"><pre><span class="kw">def</span> <span class="fn">build_pvt_context</span>(user_id, agent_id, message):
+    <span class="cmt"># 1. Tentar identificar o tema da mensagem por palavras-chave</span>
+    tema = <span class="fn">identify_tema</span>(message)  <span class="cmt"># retorna None se não identificado</span>
+
+    <span class="cmt"># 2. Ler arquivos de memória do usuário</span>
+    memory  = <span class="fn">read_file</span>(<span class="str">f"memoria/usuarios/{user_id}/MEMORY.md"</span>) <span class="kw">or</span> <span class="str">""</span>
+    history = <span class="fn">read_file</span>(<span class="str">f"memoria/usuarios/{user_id}/HISTORY.md"</span>) <span class="kw">or</span> <span class="str">""</span>
+
+    <span class="cmt"># 3. Filtrar por tema (busca keywords) — máximo 2000 tokens</span>
+    mem_filtered  = <span class="fn">filter_by_tema</span>(memory, tema) <span class="kw">if</span> tema <span class="kw">else</span> memory[:2000]
+    hist_filtered = <span class="fn">filter_history</span>(history, agent_id, tema)
+
+    <span class="kw">if not</span> tema:
+        <span class="cmt"># Tema não identificado → injetar instrução de clarificação</span>
+        <span class="kw">return</span> <span class="str">"""INSTRUÇÃO: Antes de responder, pergunte:
+        'Para que eu contextualize corretamente, sobre qual assunto você está falando?'"""</span>
+
+    <span class="kw">return</span> <span class="str">f"""
+    === Contexto sobre o usuário (tema: {tema}) ===
+    O que este usuário expressou nos grupos:
+    {mem_filtered or "Sem contexto disponível ainda."}
+
+    Histórico de conversas anteriores sobre este tema:
+    {hist_filtered or "Esta é a primeira conversa sobre este tema."}
+
+    INSTRUÇÃO: Use o contexto acima. Não mencione que tem acesso a ele.
+    """</span></pre></div>
+    </div>
+
+    <div class="warn" style="border-color:var(--pvt-dim);background:var(--pvt-faint);">
+      <div class="warn-icon">🔒</div>
+      <div>
+        <div class="warn-title" style="color:var(--pvt)">Regra Inviolável de Privacidade</div>
+        <div class="warn-body">MEMORY.md nunca é injetado em contexto de grupo. HISTORY.md (PVT privado) nunca é referenciado em grupo. O agente filtra <strong>apenas o que o próprio usuário disse coletivamente</strong>. Contexto de PVT de outros usuários nunca é cruzado.</div>
+      </div>
+    </div>
+
+    <div class="mod-grid" style="margin-top:2rem;">
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">2.3</span><span class="mod-name">STT — Transcrição de Áudio</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">Whisper API · language='pt' · Áudio de 30s transcrito em &lt;8s · Falha exibe erro específico sem travar o chat · Limite 25MB antes de chamar API.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Transcrição em < 8s para 30s de áudio</div>
+            <div class="ci"><div class="ci-box"></div>Falha da API: erro visível no chat</div>
+            <div class="ci"><div class="ci-box"></div>&gt;25MB rejeitado antes de chamar Whisper</div>
+          </div>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="mod-header"><span class="mod-num">2.4</span><span class="mod-name">TTS — Resposta em Voz</span></div>
+        <div class="mod-body">
+          <div class="mod-desc">ElevenLabs eleven_multilingual_v2 · Gerado após texto (assíncrono) · Falha silenciosa (texto entregue normalmente) · Não auto-reproduz.</div>
+          <div class="checklist">
+            <div class="ci"><div class="ci-box"></div>Áudio em < 5s para respostas ≤500 chars</div>
+            <div class="ci"><div class="ci-box"></div>Falha ElevenLabs: texto entregue sem erro</div>
+            <div class="ci"><div class="ci-box"></div>Player não auto-reproduz</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FASE 3 -->
+  <section id="fase3" class="fade-in">
+    <div class="phase-badge p3">// Fase 3 · Semanas 17–24</div>
+    <div class="stag grn">// maturidade operacional</div>
+    <h2 class="stitle">Admin Panel · Busca · Relatórios</h2>
+    <p class="slead">Sistema pronto para produção real. <strong>Gestão visual, monitoramento de custo, busca full-text e sumarização automática do MEMORY.md.</strong></p>
+
+    <table class="dtable">
+      <thead><tr><th>Módulo</th><th>O que entrega</th><th>Critério chave</th></tr></thead>
+      <tbody>
+        <tr><td>3.1 Admin Panel</td><td>Dashboard, CRUD visual, visualização de MEMORY.md/HISTORY.md, log de OpenClaw</td><td>Dashboard &lt; 3s · Admin vê arquivo de qualquer usuário</td></tr>
+        <tr><td>3.2 Busca</td><td>Full-text search via PostgreSQL tsvector/tsquery em português</td><td>100k mensagens em &lt; 2s · Isolamento por usuário</td></tr>
+        <tr><td>3.3 Relatórios</td><td>Uso por período (7d/30d/90d), custo estimado STT+TTS, ranking de agentes, export CSV</td><td>Cache Redis 1h · Custo calculado por tarifa configurável</td></tr>
+        <tr><td>3.4 Sumarização</td><td>Worker semanal que condensa MEMORY.md &gt;10.000 chars preservando decisões</td><td>12.000 chars → &lt;8.000 · Decisões e posições intactas</td></tr>
+      </tbody>
+    </table>
+
+    <div class="warn" style="border-color:var(--grn-dim);background:var(--grn-faint);">
+      <div class="warn-icon">📊</div>
+      <div>
+        <div class="warn-title" style="color:var(--grn)">Qualidade Global — Requisitos não-funcionais</div>
+        <div class="warn-body">
+          <strong>Performance:</strong> API P95 &lt;300ms · WebSocket &lt;500ms · FCP &lt;2s · <br>
+          <strong>Segurança:</strong> CORS restritivo · Rate limit 100req/min/IP · MIME real · SQL parametrizado · Logs sem dados sensíveis · <br>
+          <strong>Resiliência:</strong> OpenClaw fora do ar → erro no chat · ElevenLabs fora → texto sem erro · MinIO fora → uploads bloqueados, textos OK
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASKLIST -->
+  <section id="tasklist" class="fade-in">
+    <div class="stag pvt">// tasklist com chain-of-thought</div>
+    <h2 class="stitle">27 Tarefas Atômicas para Delegação</h2>
+    <p class="slead">Cada tarefa é <strong>auto-contida e executável sem contexto adicional</strong>. Começa com verbo de ação, inclui o "porquê" e tem critério de conclusão verificável.</p>
+
+    <!-- SPRINT 1 -->
+    <div class="sprint-head">
+      <div><div class="sprint-num">SPRINT 1 · Semanas 1–2</div><div class="sprint-title">Fundação & Infraestrutura</div><div class="sprint-sub">4 tarefas · david + erick</div></div>
+    </div>
+    <div class="sprint-cot"><strong>Raciocínio CoT:</strong> O sistema inteiro depende de banco de dados, autenticação e infraestrutura Docker antes de qualquer feature de produto. Este sprint não entrega valor visível ao usuário final, mas é bloqueante para todos os demais. Sequência: banco → docker → auth → devops.</div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-01</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Criar schema completo do PostgreSQL com todas as tabelas, índices e constraints</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">O banco é o alicerce de todo o sistema. Schema incorreto no início gera migrações custosas. Precisa das tabelas: users, agents, groups, group_members, messages, pvt_conversations, refresh_tokens.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">PRD seção 2.3 com DDL completo. PostgreSQL 15+ disponível no KVM via Docker.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>migrations/001_initial_schema.sql</code> · <code>migrations/002_indexes.sql</code> · <code>scripts/seed_admin.sql</code></div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david — Backend, automações, integrações de sistema</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Scripts executados em banco limpo sem erros. Inserir e consultar 1 usuário, 1 agente, 1 grupo, 5 mensagens sem erros. Todas FK e constraints validadas.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-02</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Configurar Docker Compose completo com todos os serviços, healthchecks e variáveis de ambiente</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">O FBR CHAT roda integralmente em KVM de 8GB. Docker Compose garante isolamento e reprodutibilidade. Healthchecks garantem ordem correta de inicialização.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Stack: PostgreSQL 15, Redis 7, MinIO, Node.js 20, Nginx 1.25. Estrutura de diretórios do PRD seção 2.2.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>docker-compose.yml</code> · <code>.env.example</code> documentado · <code>nginx/fbr-chat.conf</code> com proxy e WebSocket</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david — Backend, automações, integrações de sistema</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val"><code>docker compose up -d</code> sobe todos os serviços sem erro. <code>docker compose ps</code> mostra todos como "healthy". MinIO acessível em localhost:9001.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-03</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar autenticação JWT completa com os 4 endpoints, middleware reutilizável, bcrypt e rate limiting</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Todos os endpoints exceto /login são protegidos por JWT. Rotação de refresh tokens previne reutilização por tokens roubados. Rate limiting previne força bruta.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Schema do banco (TASK-01). PRD Módulo 1.1 com todos os endpoints, payloads e regras de expiração.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>routes/auth.js</code> · <code>middleware/authenticate.js</code> reutilizável · Testes de integração cobrindo 6 cenários</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david — Backend, automações, integrações de sistema</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">6 cenários de teste passando. Fluxo manual: login → access token → expirar → refresh → novo access token. Rate limit ativo após 5 falhas em 1 minuto.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-04</span><span class="task-agent agent-erick">erick</span><span class="task-prio prio-normal">🟡 Normal</span></div>
+      <div class="task-title">Documentar processo de deploy, criar checklist de go-live e definir backup PostgreSQL com restore testado</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Sem documentação de operação, qualquer incidente vira crise. Um restore não testado é um backup inútil. O banco armazena todas as conversas e memória dos agentes.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">docker-compose.yml (TASK-02). Acesso ao KVM. Script de backup diário via cron.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>docs/DEPLOY.md</code> · <code>docs/BACKUP.md</code> com script e retenção 7d · <code>docs/RUNBOOK.md</code> com restart, logs, acesso ao banco</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">erick — Operações, processos, execução de projetos</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Backup executado manualmente com sucesso. Restore executado em ambiente limpo com sucesso. Documentação revisada por outro membro do time.</div></div>
+    </div>
+
+    <!-- SPRINT 2 -->
+    <div class="sprint-head" style="margin-top:3rem;border-color:var(--accent-dim);background:var(--accent-faint);">
+      <div><div class="sprint-num" style="color:var(--accent)">SPRINT 2 · Semanas 3–6</div><div class="sprint-title">Backend Core — API + WebSocket + OpenClaw</div><div class="sprint-sub">5 tarefas · david</div></div>
+    </div>
+    <div class="sprint-cot"><strong>Raciocínio CoT:</strong> Com a fundação pronta, o backend precisa implementar toda a lógica de negócio antes do frontend. Ordem: CRUD → grupos/PVTs → WebSocket (componente mais complexo) → integração OpenClaw → upload de mídia. WebSocket e OpenClaw são tarefas separadas pela diferença de complexidade.</div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-05</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar CRUD de usuários e agentes no /api/admin com validação de openclaw_config e soft delete</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Sem cadastro público — admins criam usuários e configuram agentes. openclaw_config define o comportamento de cada agente virtual e precisa ser validada.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Schema (TASK-01), Auth JWT (TASK-03). PRD Módulo 1.2 com estrutura completa do openclaw_config.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>routes/admin/users.js</code> · <code>routes/admin/agents.js</code> · Schemas de validação · Testes de integração</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Role 'user' retorna 403. Email duplicado rejeitado. Agente criado, atualizado e desativado via API sem erro.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-06</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar endpoints de grupos e PVTs com paginação cursor-based e idempotência no POST /pvt</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Paginação cursor-based é obrigatória — offset quebra quando novas mensagens chegam durante o scroll. Idempotência no PVT garante que abrir a mesma conversa duas vezes não duplica.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Schema (TASK-01), Auth (TASK-03). PRD Módulos 1.3 e 1.4.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>routes/groups.js</code> · <code>routes/pvt.js</code> · Testes de isolamento de dados e paginação</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">POST /pvt duas vezes com mesmos params retorna mesmo pvt_id com is_new=false. Paginação testada com 500+ mensagens.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-07 + 08</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar servidor WebSocket completo e integração OpenClaw com debounce, timeout e tratamento de erros</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">WebSocket é o núcleo de entrega em tempo real. Mensagem deve ser persistida ANTES de entregue. Debounce 3s agrupa mensagens rápidas. Timeout 10s gera erro legível no chat — silêncio é inaceitável.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Grupos e PVTs (TASK-06). Agentes com openclaw_config (TASK-05). PRD Módulo 1.5 com todos os eventos e fluxos.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>socket/index.js</code> · <code>services/openclaw.js</code> · <code>services/agent-router.js</code> · Teste de carga 30 conexões simultâneas</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">30 WebSockets simultâneos sem erro. Entrega em &lt;500ms. OpenClaw mockado em 11s → erro no chat após 10s. Reconexão recebe mensagens perdidas.</div></div>
+    </div>
+
+    <!-- SPRINT 3 -->
+    <div class="sprint-head" style="margin-top:3rem;border-color:var(--pvt-dim);background:var(--pvt-faint);">
+      <div><div class="sprint-num" style="color:var(--pvt)">SPRINT 3 · Semanas 5–8</div><div class="sprint-title">Frontend React — Interface de Chat</div><div class="sprint-sub">5 tarefas · chiara</div></div>
+    </div>
+    <div class="sprint-cot"><strong>Raciocínio CoT:</strong> Com API e WebSocket estáveis, o frontend pode ser construído com contratos de interface garantidos. Ordem: AuthContext + SocketContext (base) → sidebar → painel de chat (virtualizado, o mais complexo) → input + UX → componentes de mídia.</div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-10</span><span class="task-agent agent-chiara">chiara</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Criar estrutura base React com AuthContext, SocketContext, roteamento e tela de login funcional</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">AuthContext precisa renovar JWT automaticamente antes de expirar (interceptor de 401). SocketContext precisa reconectar com exponential backoff. Essa base afeta todos os componentes acima.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Endpoints de auth funcionando (TASK-03). PRD Módulo 1.7.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>contexts/AuthContext.jsx</code> · <code>contexts/SocketContext.jsx</code> · <code>pages/Login.jsx</code> · <code>App.jsx</code> com roteamento</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">chiara — Desenvolvimento frontend, código, apresentações HTML</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Login válido redireciona para /chat. Login inválido exibe erro inline. Token expirado → renovação automática transparente sem logout.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-11 a 14</span><span class="task-agent agent-chiara">chiara</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar sidebar, painel de mensagens virtualizado, input com UX completa e componentes de mídia</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">MessageList virtualizado é crítico — sem virtualização, 500 mensagens travam o browser. Scroll lock: se usuário rolou para cima, nova mensagem NÃO move o scroll. Player de áudio usado tanto para uploads quanto para respostas TTS.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">AuthContext (TASK-10). API de grupos/PVTs (TASK-06). WebSocket (TASK-07). Upload (TASK-09).</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val">GroupList · PvtList · MessageList (virtualizado) · MessageBubble (user/agent) · MessageInput · AudioPlayer · VideoPlayer · ImageLightbox</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">chiara</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">500 mensagens sem frame drops. Badge de não-lidos atualiza em tempo real. Typing indicator aparece/desaparece corretamente. Lighthouse Performance ≥ 80.</div></div>
+    </div>
+
+    <!-- SPRINT 4-5 -->
+    <div class="sprint-head" style="margin-top:3rem;border-color:var(--mem-dim);background:var(--mem-faint);">
+      <div><div class="sprint-num" style="color:var(--mem)">SPRINT 4+5 · Semanas 9–16</div><div class="sprint-title">Memória (MEMORY.md + HISTORY.md) + Voz (STT + TTS)</div><div class="sprint-sub">7 tarefas · david + chiara</div></div>
+    </div>
+    <div class="sprint-cot"><strong>Raciocínio CoT:</strong> A memória requer um serviço independente (orquestrador) que não afete a entrega de mensagens. Ordem: worker MEMORY.md → worker HISTORY.md → ContextRouter → integração PVT → STT → TTS → AudioRecorder no frontend. STT e TTS são independentes entre si mas dependem da infraestrutura de upload.</div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-15 a 18</span><span class="task-agent agent-david">david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar orquestrador de memória (MEMORY.md + HISTORY.md) e ContextRouter integrado ao fluxo de PVT</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">O orquestrador é processo separado — se cair, o chat continua. MEMORY.md atualizado em background via Redis pub/sub. ContextRouter filtra por tema antes de injetar no prompt. Contexto limitado a 2000 tokens para compatibilidade com janelas menores.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Redis configurado (TASK-02). WebSocket do PVT (TASK-08). PRD seção 4 Módulos 2.1 e 2.2 com algoritmos completos.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>orchestrator/workers/memory_worker</code> · <code>history_worker</code> · <code>services/context_router.js</code> · <code>config/topics.json</code></div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Mensagem no grupo → MEMORY.md atualizado em &lt;30s. PVT abre com contexto de vendas quando usuário discutiu vendas no grupo. Tema ambíguo → agente pergunta antes de responder. Falha do worker não afeta WebSocket principal.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-19 a 21</span><span class="task-agent agent-david">david</span><span class="task-prio prio-normal">🟡 Normal</span></div>
+      <div class="task-title">Implementar STT (Whisper), TTS (ElevenLabs) e AudioRecorder no frontend com gravação via MediaRecorder API</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">STT: áudio → texto → agente processa o texto. TTS: texto do agente → áudio MP3 → event WebSocket message_updated. Ambos com fallback gracioso: falha não bloqueia entrega de texto. AudioRecorder grava no browser sem plugin.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Upload (TASK-09). WebSocket (TASK-07). TTS: agentes com tts_voice_id configurado (TASK-05).</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>services/stt.js</code> · <code>services/tts.js</code> · <code>components/AudioRecorder.jsx</code> com preview e timer</div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david (STT+TTS) · chiara (AudioRecorder)</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Áudio 30s transcrito em &lt;8s. TTS em &lt;5s para ≤500 chars. Falha Whisper: erro específico no chat. Falha ElevenLabs: texto entregue silenciosamente. Gravação: preview → confirmar → áudio + transcrição no chat.</div></div>
+    </div>
+
+    <!-- SPRINT 6-7 -->
+    <div class="sprint-head" style="margin-top:3rem;border-color:var(--grn-dim);background:var(--grn-faint);">
+      <div><div class="sprint-num" style="color:var(--grn)">SPRINT 6+7 · Semanas 17–24</div><div class="sprint-title">Admin Panel · Busca · Relatórios · Segurança · Go-Live</div><div class="sprint-sub">5 tarefas · david + chiara + erick + gabe</div></div>
+    </div>
+    <div class="sprint-cot"><strong>Raciocínio CoT:</strong> O último sprint fecha o loop operacional. Admin panel precisa da API de relatórios antes de ser construído. Segurança é validada antes do teste de carga. Teste de carga valida que o KVM aguenta antes de abrir para usuários. Documentação é o último entregável.</div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-22 a 24</span><span class="task-agent agent-chiara">chiara + david</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Criar admin panel visual, endpoints de relatórios com cache Redis e worker de sumarização do MEMORY.md</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Admin panel: dashboard, CRUD visual, visualização de MEMORY.md/HISTORY.md por usuário, log de OpenClaw. Relatórios: cache 1h, custo por tarifa configurável, CSV. Sumarização: worker semanal que condensa arquivos &gt;10.000 chars preservando decisões.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">CRUD de admin (TASK-05). Orquestrador (TASK-15). PRD seção 5 Módulos 3.1, 3.3, 3.4.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val">Páginas <code>admin/</code> React · <code>routes/reports.js</code> · <code>routes/search.js</code> · <code>orchestrator/workers/summarizer</code></div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">chiara (frontend) · david (backend + worker)</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">Dashboard &lt;3s. Admin visualiza MEMORY.md de qualquer usuário. Busca full-text em 100k msgs &lt;2s. Sumarização: 12.000 chars → &lt;8.000 preservando decisões.</div></div>
+    </div>
+
+    <div class="task">
+      <div class="task-header"><span class="task-id">TASK-25 a 27</span><span class="task-agent agent-erick">david + erick + gabe</span><span class="task-prio prio-high">🔴 Alta</span></div>
+      <div class="task-title">Implementar segurança completa, executar teste de carga com 30 usuários simultâneos e documentar API + onboarding</div>
+      <div class="task-body">
+        <div><div class="task-field-label">Contexto</div><div class="task-field-val">Segurança: CORS restritivo, rate limit 100req/min, MIME real, SQL parametrizado, logs sem dados sensíveis. Carga: 30 WS simultâneos por 10 minutos, P95 &lt;500ms. Docs: OpenAPI 3.0, guia de onboarding, guia de admin.</div></div>
+        <div><div class="task-field-label">Input esperado</div><div class="task-field-val">Sistema completo deployado no KVM. k6 ou Artillery para teste. PRD seção 7 com todos os requisitos de segurança.</div></div>
+        <div><div class="task-field-label">Output esperado</div><div class="task-field-val"><code>docs/SECURITY.md</code> · <code>docs/api/openapi.yaml</code> · <code>docs/ONBOARDING.md</code> · <code>docs/LOAD_TEST_RESULTS.md</code></div></div>
+        <div><div class="task-field-label">Agente ARVA</div><div class="task-field-val">david (segurança) · erick (carga e ops) · gabe (documentação)</div></div>
+      </div>
+      <div class="task-done"><div class="task-done-label">✓ Critério de Conclusão</div><div class="task-done-val">CORS rejeitado para domínios não autorizados. P95 &lt;500ms com 30 simultâneos. RAM KVM &lt;6GB no pico. OpenAPI válido. Usuário novo consegue enviar primeira mensagem seguindo apenas ONBOARDING.md.</div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="ft">
+      <div>
+        <div class="ft-brand">FBR<span>·</span>CHAT</div>
+        <div style="font-size:.78rem;color:var(--slate);margin-top:.3rem;font-family:'Inter',sans-serif;font-weight:300;">PRD + Spec Técnica + TaskList</div>
+      </div>
+      <div class="ft-meta">
+        <div>Versão 1.0 · Abril 2026</div>
+        <div>27 tarefas · 7 sprints · 24 semanas</div>
+        <div style="opacity:.4;margin-top:.3rem">Confidencial · Uso Interno FBR</div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
