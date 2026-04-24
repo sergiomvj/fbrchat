@@ -85,11 +85,21 @@ CREATE TABLE users (
   deactivated_at TIMESTAMPTZ
 );
 
+-- Empresas
+CREATE TABLE companies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(150) NOT NULL,
+  slug VARCHAR(80) UNIQUE NOT NULL,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Agentes virtuais
 CREATE TABLE agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) NOT NULL,
   slug VARCHAR(50) UNIQUE NOT NULL,
+  company_id UUID NOT NULL REFERENCES companies(id),
   avatar_url TEXT,
   openclaw_config JSONB NOT NULL,  -- model, system_prompt, temperature, etc.
   tts_enabled BOOLEAN DEFAULT FALSE,
@@ -165,6 +175,7 @@ CREATE TABLE refresh_tokens (
 
 - `users.role` define autorização de rotas administrativas.
 - `users.is_active = false` representa soft delete; mensagens e vínculos históricos são preservados.
+- Cada agente pertence a uma empresa via `agents.company_id`.
 - PVT é sempre representado por um único registro canônico em `pvt_conversations`, inclusive em conversas `user-user`.
 - O backend deve ordenar os participantes antes de inserir ou buscar PVT para garantir idempotência simétrica:
   - `participant_a` = menor tupla lexicográfica entre `(type, id)`
@@ -244,10 +255,17 @@ POST   /api/admin/agents             → cria agente
 PATCH  /api/admin/agents/:id         → atualiza config
 DELETE /api/admin/agents/:id         → desativa agente
 
+# Empresas
+GET    /api/admin/companies          → lista empresas
+POST   /api/admin/companies          → cria empresa
+PATCH  /api/admin/companies/:id      → atualiza empresa
+DELETE /api/admin/companies/:id      → desativa empresa
+
 # Configuração de agente (POST/PATCH body):
 {
   "name": "Agente de Vendas",
   "slug": "vendas",
+  "company_id": "uuid-da-empresa",
   "avatar_url": "https://...",
   "openclaw_config": {
     "model": "claude-3-5-sonnet",
@@ -263,6 +281,18 @@ DELETE /api/admin/agents/:id         → desativa agente
 
 Regra de segurança: a chave real do provedor nunca é persistida no banco nem retornada pela API. O backend resolve `api_key_ref` em tempo de execução consultando variáveis de ambiente ou secret store local.
 
+Filtro obrigatório de gestão:
+
+- A listagem administrativa de agentes deve suportar filtro por empresa.
+- Contrato mínimo da listagem:
+
+```
+GET /api/admin/agents?company_id={uuid}
+GET /api/admin/agents?company_slug={slug}
+```
+
+- A interface administrativa deve expor filtro visível por empresa para reduzir ruído operacional ao gerenciar catálogos grandes de agentes.
+
 #### Critérios de aceite
 - [ ] Apenas usuários com `role = 'admin'` acessam rotas /admin
 - [ ] Criação de usuário valida email único
@@ -270,6 +300,7 @@ Regra de segurança: a chave real do provedor nunca é persistida no banco nem r
 - [ ] Deleção é soft delete (campo `is_active = false`), não apaga dados
 - [ ] Agente desativado não aparece na lista de membros disponíveis
 - [ ] `slug` do agente é único e usado para menção (@slug)
+- [ ] Cards/listas de agentes no admin podem ser filtrados por empresa
 
 #### Definição de Pronto
 - CRUD completo funcionando via API
@@ -871,7 +902,7 @@ Interface web dedicada para gestão da plataforma. Separada da interface de chat
 /admin
 ├── /dashboard      → métricas gerais (usuários ativos, mensagens/dia, agentes mais usados)
 ├── /users          → CRUD de usuários + visualizar MEMORY.md e HISTORY.md
-├── /agents         → CRUD de agentes + preview da configuração OpenClaw
+├── /agents         → CRUD de agentes + preview da configuração OpenClaw + filtro por empresa
 ├── /groups         → lista de grupos + membros + métricas de uso
 ├── /logs           → log de chamadas ao OpenClaw (agente, latência, tokens, custo estimado)
 └── /settings       → configurações globais (STT on/off, TTS on/off, rate limits)
@@ -882,6 +913,7 @@ Interface web dedicada para gestão da plataforma. Separada da interface de chat
 - [ ] Admin pode visualizar MEMORY.md e HISTORY.md de qualquer usuário
 - [ ] Log de chamadas OpenClaw mostra: timestamp, agente, tokens usados, latência, status
 - [ ] Configurações globais persistidas no banco (não em variáveis de ambiente)
+- [ ] Tela de agentes permite filtrar cards/tabela por empresa sem recarregar a página
 
 ---
 

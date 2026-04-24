@@ -19,9 +19,9 @@ O FBR CHAT é uma plataforma proprietária de mensageria que permite integrar ag
 ---
 
 #### TASK-01 · david · 🔴 Alta
-**Ação:** Criar o schema completo do banco de dados PostgreSQL com todas as tabelas do FBR CHAT (users, agents, groups, group_members, messages, pvt_conversations, refresh_tokens, system_settings, openclaw_call_logs) conforme especificação do PRD, incluindo índices de performance e constraints de integridade.
+**Ação:** Criar o schema completo do banco de dados PostgreSQL com todas as tabelas do FBR CHAT (users, companies, agents, groups, group_members, messages, pvt_conversations, refresh_tokens, system_settings, openclaw_call_logs) conforme especificação do PRD, incluindo índices de performance e constraints de integridade.
 
-**Contexto:** O banco de dados é o alicerce de todo o sistema. Sem o schema correto e performático desde o início, migrações futuras serão custosas. O FBR CHAT precisa de tabelas para usuários, agentes virtuais, grupos, membros de grupos, mensagens (suportando texto e mídia), PVTs, sessões JWT, configurações globais e logs operacionais do OpenClaw. O schema de usuários precisa suportar `role` e soft delete; o schema de PVT precisa ser canônico para garantir idempotência simétrica em conversas `user-user` e `user-agent`.
+**Contexto:** O banco de dados é o alicerce de todo o sistema. Sem o schema correto e performático desde o início, migrações futuras serão custosas. O FBR CHAT precisa de tabelas para usuários, empresas, agentes virtuais, grupos, membros de grupos, mensagens (suportando texto e mídia), PVTs, sessões JWT, configurações globais e logs operacionais do OpenClaw. O schema de usuários precisa suportar `role` e soft delete; o schema de PVT precisa ser canônico para garantir idempotência simétrica em conversas `user-user` e `user-agent`; e agentes precisam pertencer a empresas para permitir filtro operacional no admin.
 
 **Input esperado:** PRD do FBR CHAT com seção 2.3 (Modelo de dados principal) contendo todos os DDLs. PostgreSQL 15+ disponível no KVM.
 
@@ -78,15 +78,15 @@ O FBR CHAT é uma plataforma proprietária de mensageria que permite integrar ag
 ---
 
 #### TASK-05 · david · 🔴 Alta
-**Ação:** Implementar os endpoints de administração do FBR CHAT para gestão de usuários (/api/admin/users CRUD) e agentes (/api/admin/agents CRUD), com validação de schema, soft delete, proteção por role 'admin' e validação dos campos obrigatórios da openclaw_config (model e system_prompt).
+**Ação:** Implementar os endpoints de administração do FBR CHAT para gestão de usuários (/api/admin/users CRUD), empresas (/api/admin/companies CRUD) e agentes (/api/admin/agents CRUD), com validação de schema, soft delete, proteção por role 'admin', filtro de agentes por empresa e validação dos campos obrigatórios da openclaw_config (model e system_prompt).
 
 **Contexto:** Administradores precisam cadastrar usuários (sem cadastro público) e configurar agentes com seus modelos OpenClaw antes de qualquer uso da plataforma. O CRUD de agentes é especialmente crítico pois a openclaw_config define o comportamento de cada agente virtual. Soft delete garante que histórico de mensagens não seja perdido.
 
 **Input esperado:** Schema do banco (TASK-01). Autenticação JWT (TASK-03). PRD seção 3 Módulo 1.2 com especificação completa dos endpoints e estrutura do objeto openclaw_config.
 
-**Output esperado:** Arquivos de rotas `backend/src/routes/admin/users.js` e `backend/src/routes/admin/agents.js`. Schemas de validação (Zod ou Joi) para criação e atualização. Testes de integração cobrindo: criar usuário, email duplicado, criar agente com config inválida, atualizar, soft delete, listar só ativos.
+**Output esperado:** Arquivos de rotas `backend/src/routes/admin/users.js`, `backend/src/routes/admin/companies.js` e `backend/src/routes/admin/agents.js`. Schemas de validação (Zod ou Joi) para criação e atualização. Testes de integração cobrindo: criar usuário, email duplicado, criar empresa, criar agente com config inválida, atualizar, soft delete, listar só ativos e filtrar agentes por empresa.
 
-**Critério de conclusão:** Todos os testes passando. Tentativa de acessar /api/admin com role 'user' retorna 403. Agente criado com openclaw_config completo, consultado e atualizado via API sem erro.
+**Critério de conclusão:** Todos os testes passando. Tentativa de acessar /api/admin com role 'user' retorna 403. Agente criado com openclaw_config completo, vinculado a uma empresa, consultado e atualizado via API sem erro. Filtro `company_id` ou `company_slug` retorna apenas os agentes daquela empresa.
 
 ---
 
@@ -327,7 +327,7 @@ O FBR CHAT é uma plataforma proprietária de mensageria que permite integrar ag
 ---
 
 #### TASK-22 · chiara · 🔴 Alta
-**Ação:** Criar o painel de administração web do FBR CHAT em /admin com: dashboard de métricas (usuários ativos, mensagens por dia, agentes mais usados nos últimos 30 dias), CRUD visual de usuários (incluindo visualização do MEMORY.md e HISTORY.md), CRUD visual de agentes com preview da openclaw_config, lista de grupos com membros e volume de mensagens, log de chamadas ao OpenClaw com latência e tokens, e tela de settings globais persistidos.
+**Ação:** Criar o painel de administração web do FBR CHAT em /admin com: dashboard de métricas (usuários ativos, mensagens por dia, agentes mais usados nos últimos 30 dias), CRUD visual de usuários (incluindo visualização do MEMORY.md e HISTORY.md), CRUD visual de agentes com preview da openclaw_config, filtro visível de agentes por empresa, lista de grupos com membros e volume de mensagens, log de chamadas ao OpenClaw com latência e tokens, e tela de settings globais persistidos.
 
 **Contexto:** Administradores do FBR CHAT precisam de uma interface para gestão sem acesso direto ao banco de dados ou à linha de comando. O dashboard de métricas permite monitorar uso e custo. A visualização do MEMORY.md e HISTORY.md por usuário é essencial para debugging e suporte. O log de OpenClaw permite identificar agentes lentos ou com alto consumo de tokens.
 
@@ -335,7 +335,7 @@ O FBR CHAT é uma plataforma proprietária de mensageria que permite integrar ag
 
 **Output esperado:** Páginas React em `frontend/src/pages/admin/`: Dashboard.jsx, Users.jsx, Agents.jsx, Groups.jsx, Logs.jsx, Settings.jsx. Componente de visualização de Markdown para MEMORY.md e HISTORY.md.
 
-**Critério de conclusão:** Dashboard carrega dados dos últimos 30 dias em < 3s. Admin visualiza MEMORY.md de qualquer usuário. Admin cria novo agente e configura openclaw_config pelo formulário. Log de OpenClaw mostra últimas 100 chamadas com filtro por agente. Tela de settings altera valores globais persistidos e reflete o estado salvo pelo backend.
+**Critério de conclusão:** Dashboard carrega dados dos últimos 30 dias em < 3s. Admin visualiza MEMORY.md de qualquer usuário. Admin cria novo agente e configura openclaw_config pelo formulário. Cards/tabela de agentes podem ser filtrados por empresa sem recarregar a página. Log de OpenClaw mostra últimas 100 chamadas com filtro por agente. Tela de settings altera valores globais persistidos e reflete o estado salvo pelo backend.
 
 ---
 

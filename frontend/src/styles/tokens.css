@@ -1,0 +1,42 @@
+:root {
+  --color-bg-main: #faf9f7;
+  --color-bg-sidebar: #f2f4f7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f4f3f1;
+  --color-surface-strong: #efeeec;
+  --color-border-subtle: #e5e5e3;
+  --color-border-strong: #cfd4d9;
+  --color-text-primary: #1a1c1b;
+  --color-text-muted: #5d656b;
+  --color-text-soft: #7f878d;
+  --color-accent: #004b50;
+  --color-accent-strong: #003336;
+  --color-accent-soft: #dceff1;
+  --color-cyan: #008b94;
+  --color-success: #227a5f;
+  --color-warning: #9a6b12;
+  --color-danger: #ba1a1a;
+  --color-danger-soft: #ffdad6;
+
+  --font-display: "Newsreader", Georgia, serif;
+  --font-body: "Inter", sans-serif;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  --sidebar-width: 280px;
+  --context-width: 320px;
+  --shadow-overlay: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
