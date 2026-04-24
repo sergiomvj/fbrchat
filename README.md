@@ -5,22 +5,41 @@ Workspace principal do projeto FBR CHAT.
 ## Estrutura
 
 - `frontend/` interface React + Vite
-- `backend/` API HTTP e camada de mensageria
-- `orchestrator/` workers de memória e contexto
-- `nginx/` proxy reverso local e produção
-- `prd/` especificação funcional e plano de execução
-- `stitch_fbr/` exports visuais, design tokens e guia de implementação
+- `backend/` API HTTP, Socket.IO, contratos e testes
+- `orchestrator/` worker de memoria e contexto
+- `nginx/` proxy reverso local e base de deploy
+- `docs/` OpenAPI inicial e notas operacionais
+- `prd/` especificacao funcional, tasklist, plano e progresso
+- `stitch_fbr/` exports visuais e guia de implementacao
 
-## Ordem sugerida para desenvolvimento local
+## Estado Atual
 
-1. Instalar dependências do frontend
-2. Validar bootstrap do frontend
-3. Evoluir backend e orchestrator
-4. Conectar frontend aos contratos reais
+- Chat e admin funcionando localmente com backend real mockado
+- WebSocket e fallback HTTP alinhados
+- Settings, logs, uploads, STT/TTS mockados e memoria contextual ativos
+- Sprints autonomas 1 a 10 concluidas
 
-## Documentos principais
+## Como Rodar Localmente
+
+1. `cd backend && npm install && npm run dev`
+2. Em outro terminal: `cd frontend && npm install && npm run dev`
+3. Opcional: `cd orchestrator && npm run dev`
+
+## Validacao Rapida
+
+- Backend: `cd backend && npm test`
+- Frontend: `cd frontend && npm run build`
+
+## Credenciais Locais
+
+- Admin: `admin@fbr.local` / `admin123`
+- User: `joao@fbr.local` / `user123`
+
+## Documentos Principais
 
 - `prd/FBR_CHAT_PRD.md`
 - `prd/FBR_CHAT_TASKLIST.md`
 - `prd/FBR_CHAT_EXECUTION_SPRINTS.md`
-- `stitch_fbr/IMPLEMENTATION_GUIDE.md`
+- `prd/FBR_CHAT_PROGRESS.md`
+- `docs/OPERATIONS.md`
+- `docs/openapi.yaml`

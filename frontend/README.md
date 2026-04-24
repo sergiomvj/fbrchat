@@ -1,31 +1,32 @@
 # FBR CHAT Frontend
 
-Base inicial do frontend em React + Vite, criada a partir de:
+Frontend em React + Vite alinhado ao PRD e aos exports do Stitch.
 
-- PRD aprovado em `prd/`
-- exports do Stitch em `stitch_fbr/`
-- blueprint de implementação em `stitch_fbr/IMPLEMENTATION_GUIDE.md`
-
-## Rotas iniciais
+## Rotas
 
 - `/chat`
 - `/admin`
 
+## Estado Atual
+
+- Chat conectado ao backend local com bootstrap, historico, envio otimista e updates realtime
+- Admin conectado ao backend local para users, agents, groups, logs e settings
+- `socket.io-client` configurado para o fluxo realtime
+
+## Comandos
+
+- `npm install`
+- `npm run dev`
+- `npm run build`
+
+## Variaveis Relevantes
+
+- `VITE_API_BASE_URL`
+
 ## Estrutura
 
-- `src/components/shell/` componentes compartilhados
-- `src/features/chat/` tela principal do chat
-- `src/features/admin/` tela inicial do painel admin
+- `src/lib/` cliente HTTP base
+- `src/features/chat/` runtime e UI do chat
+- `src/features/admin/` runtime e UI do admin
+- `src/components/shell/` shell compartilhado
 - `src/styles/` tokens e estilos globais
-
-## Próximos passos
-
-1. Instalar dependências com `npm install`
-2. Subir o ambiente com `npm run dev`
-3. Substituir dados mockados por contratos reais do backend
-4. Conectar estados de:
-   - autenticação
-   - WebSocket
-   - envio otimista
-   - `message_updated`
-   - logs e settings do admin

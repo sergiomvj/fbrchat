@@ -1,23 +1,26 @@
 # Backend
 
-Skeleton inicial da API do FBR CHAT.
+Backend local do FBR CHAT com Express e Socket.IO.
 
-## Objetivo desta fase
+## Escopo Atual
 
-- garantir entry point executável
-- preparar a pasta para rotas, serviços, middleware e migrations
+- Auth: login, refresh, logout, me
+- Admin: companies, users, agents, settings, logs
+- Conversas: groups, PVTs, historico e envio de mensagens
+- Uploads: descriptor local validado
+- Agentes: runtime mockado com `callOpenClaw()` e `resolveSecret()`
+- Memoria: ContextRouter, MEMORY.md e HISTORY.md
 
-## Estrutura atual
+## Comandos
 
-- `src/server.js` entry point mínimo
-- `src/contracts/` contratos e DTOs compartilhados
-- `src/fixtures/` dados locais para integração mock-first
-- `migrations/` schema e índices PostgreSQL
-- `scripts/seed_admin.sql` seed inicial
+- `npm install`
+- `npm run dev`
+- `npm test`
 
-## Próximas áreas
+## Estrutura
 
-- `src/routes/`
-- `src/middleware/`
-- `src/services/`
-- `tests/`
+- `src/routes/` superficie HTTP
+- `src/socket/` gateway realtime
+- `src/services/` integracoes, memoria e midia
+- `src/middleware/` auth, logging e seguranca
+- `tests/` cobertura dos fluxos criticos

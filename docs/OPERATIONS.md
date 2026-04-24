@@ -5,7 +5,7 @@
 - Backend exposes auth, admin, groups, PVTs, uploads, bootstrap, and HTTP message fallback.
 - Socket.IO is attached in `backend/src/server.js`.
 - Frontend chat and admin routes now consume the live local backend instead of static mocks.
-- Memory artifacts are materialized under `backend/runtime/memory/users/<user_id>/`.
+- Memory artifacts are materialized under `runtime/memory/users/<user_id>/`.
 
 ## Local Validation
 

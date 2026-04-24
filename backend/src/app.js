@@ -10,6 +10,7 @@ import { adminSettingsRouter } from "./routes/admin-settings.js";
 import { adminLogsRouter } from "./routes/admin-logs.js";
 import { createMessagesRouter } from "./routes/messages.js";
 import { uploadsRouter } from "./routes/uploads.js";
+import { integrationsArvaRouter } from "./routes/integrations-arva.js";
 import { requestContext } from "./middleware/request-context.js";
 import { requestLogger } from "./middleware/request-logger.js";
 import { securityHeaders } from "./middleware/security-headers.js";
@@ -40,6 +41,7 @@ export function createApp(messageGateway = null) {
   app.use("/api/groups", groupsRouter);
   app.use("/api/pvt", pvtRouter);
   app.use("/api/uploads", uploadsRouter);
+  app.use("/api/integrations/arva", integrationsArvaRouter);
   if (messageGateway) {
     app.use("/api/messages", createMessagesRouter(messageGateway));
   }

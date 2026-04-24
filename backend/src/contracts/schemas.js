@@ -42,6 +42,9 @@ export const adminSchemas = {
     properties: {
       name: "string",
       slug: "string",
+      provider: "string|null",
+      provider_agent_id: "string|null",
+      arva_agent_id: "string|null",
       company_id: "uuid",
       avatar_url: "string|null",
       openclaw_config: {
@@ -101,5 +104,39 @@ export const adminRuntimeSchemas = {
     stt_enabled: "boolean",
     tts_enabled: "boolean",
     inference_rate_limit: "number"
+  },
+  arvaAgentUpsert: {
+    required: [
+      "fbrchat_id",
+      "arva_agent_id",
+      "provider",
+      "provider_agent_id",
+      "company_slug",
+      "name",
+      "slug",
+      "status",
+      "openclaw_config"
+    ],
+    properties: {
+      fbrchat_id: "string",
+      arva_agent_id: "string",
+      provider: "string",
+      provider_agent_id: "string",
+      company_slug: "string",
+      name: "string",
+      slug: "string",
+      avatar_url: "string|null",
+      description: "string|null",
+      status: ["active", "inactive"],
+      tts_enabled: "boolean",
+      tts_voice_id: "string|null"
+    }
+  },
+  arvaChatOpen: {
+    required: ["fbrchat_id", "human_user_id"],
+    properties: {
+      fbrchat_id: "string",
+      human_user_id: "uuid"
+    }
   }
 };

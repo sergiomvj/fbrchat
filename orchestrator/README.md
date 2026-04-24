@@ -1,10 +1,18 @@
 # Orchestrator
 
-Skeleton inicial do worker responsável por:
+Worker local responsavel por refrescar artefatos de memoria e contexto.
 
-- MEMORY.md
-- HISTORY.md
-- ContextRouter
-- sumarização e eventos assíncronos
+## Escopo Atual
 
-Nesta fase existe apenas um entry point mínimo para dar base ao desenvolvimento incremental.
+- materializacao de `MEMORY.md`
+- materializacao de `HISTORY.md`
+- refresh periodico para usuarios ativos
+
+## Comandos
+
+- `npm install`
+- `npm run dev`
+
+## Observacao
+
+O worker ainda usa a store local do backend. A troca para filas e persistencia real depende do ambiente definitivo.

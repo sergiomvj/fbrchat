@@ -100,6 +100,7 @@
   - critical flow coverage expanded for context and media
   - OpenAPI starter document added
   - operations notes added for local runtime and external blockers
+  - addendum de integracao ARVA -> FBR CHAT documentado
 
 ## Immediate Next Step
 

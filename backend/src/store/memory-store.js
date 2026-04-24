@@ -14,6 +14,7 @@ function createInitialAgents() {
   return fixtureData.agents.map((agent) => ({
     ...agent,
     avatar_url: null,
+    description: null,
     is_active: true,
     openclaw_config: {
       model: "claude-3-5-sonnet",
@@ -321,6 +322,9 @@ export const memoryStore = {
   listAgents() {
     return agents;
   },
+  findAgentById(id) {
+    return agents.find((agent) => agent.id === id) ?? null;
+  },
   listAgentsByCompany({ companyId, companySlug } = {}) {
     return agents.filter((agent) => {
       if (!agent.is_active) return false;
@@ -337,20 +341,51 @@ export const memoryStore = {
   },
   createAgent(payload) {
     const agent = {
-      id: createId(),
+      id: payload.id ?? createId(),
       name: payload.name,
       slug: payload.slug,
+      provider: payload.provider ?? null,
+      provider_agent_id: payload.provider_agent_id ?? null,
+      arva_agent_id: payload.arva_agent_id ?? null,
       company_id: payload.company_id,
       avatar_url: payload.avatar_url ?? null,
+      description: payload.description ?? null,
       openclaw_config: payload.openclaw_config,
       tts_enabled: payload.tts_enabled ?? false,
       tts_voice_id: payload.tts_voice_id ?? null,
-      is_active: true,
+      is_active: payload.is_active ?? true,
       created_at: new Date().toISOString()
     };
 
     agents.push(agent);
     return agent;
+  },
+  upsertAgentFromArva(payload) {
+    const existing = agents.find((entry) => entry.id === payload.id);
+
+    if (existing) {
+      Object.assign(existing, {
+        name: payload.name,
+        slug: payload.slug,
+        provider: payload.provider,
+        provider_agent_id: payload.provider_agent_id,
+        arva_agent_id: payload.arva_agent_id,
+        company_id: payload.company_id,
+        avatar_url: payload.avatar_url ?? null,
+        description: payload.description ?? null,
+        openclaw_config: payload.openclaw_config,
+        tts_enabled: payload.tts_enabled ?? false,
+        tts_voice_id: payload.tts_voice_id ?? null,
+        is_active: payload.is_active ?? true
+      });
+
+      return { agent: existing, status: "updated" };
+    }
+
+    return {
+      agent: this.createAgent(payload),
+      status: "created"
+    };
   },
   updateAgent(id, payload) {
     const agent = agents.find((entry) => entry.id === id);

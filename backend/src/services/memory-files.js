@@ -1,8 +1,11 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { memoryStore } from "../store/memory-store.js";
 
-const memoryRoot = path.resolve(process.cwd(), "runtime", "memory");
+const serviceDir = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(serviceDir, "..", "..", "..");
+const memoryRoot = path.join(projectRoot, "runtime", "memory");
 
 async function ensureDirectory(targetPath) {
   await fs.mkdir(targetPath, { recursive: true });

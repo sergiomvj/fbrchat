@@ -1,9 +1,17 @@
 # Nginx
 
-Configuração inicial de proxy reverso para:
+Base de proxy reverso para ambiente local e futuro deploy.
 
-- frontend na raiz `/`
-- backend HTTP em `/api/`
-- WebSocket em `/socket.io/`
+## Roteamento Atual
 
-É uma base local/documental que será refinada junto com Docker e deploy.
+- `/` -> frontend
+- `/api/` -> backend HTTP
+- `/socket.io/` -> backend realtime
+
+## Arquivo Principal
+
+- `fbr-chat.conf`
+
+## Observacao
+
+Esta configuracao e uma base documental. Ajustes finais dependem do ambiente de container ou producao.
