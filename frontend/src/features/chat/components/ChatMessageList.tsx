@@ -27,7 +27,11 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
           }
         >
           <div className="message-row__avatar">
-            {message.sender_name.slice(0, 2).toUpperCase()}
+            {message.sender_type === "agent" ? (
+              <img src="/avatars/default_agent.png" alt="AI Avatar" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+            ) : (
+              message.sender_name.slice(0, 2).toUpperCase()
+            )}
           </div>
           <div className="message-row__content">
             <div className="message-row__meta">
@@ -40,7 +44,11 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
             {message.media_type === "audio" ? (
               <div className="message-card message-card--audio">
                 <div className="audio-player">
-                  <button className="audio-player__button" type="button">
+                  <button 
+                    className="audio-player__button" 
+                    type="button"
+                    onClick={() => alert("Toggled audio play/pause (Mock)")}
+                  >
                     Play
                   </button>
                   <div className="audio-player__wave">
@@ -56,7 +64,12 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
               </div>
             ) : message.media_type === "image" ? (
               <div className="message-card message-card--image">
-                <div className="message-card__image">CRM Screenshot</div>
+                <img 
+                  src="/media/crm_screenshot.png" 
+                  alt="CRM Dashboard Screenshot" 
+                  className="message-card__image" 
+                  style={{ width: "100%", height: "auto", borderRadius: "8px", objectFit: "cover" }} 
+                />
                 <p>{message.content || "Imagem enviada para o thread"}</p>
               </div>
             ) : (
@@ -71,10 +84,21 @@ export function ChatMessageList({ messages }: ChatMessageListProps) {
                 ) : null}
                 {message.tts_audio_url ? (
                   <div className="message-card__actions">
-                    <button className="button button--primary" type="button">
+                    <button 
+                      className="button button--primary" 
+                      type="button"
+                      onClick={() => alert("Executando stream de audio via TTS API...")}
+                    >
                       Player TTS
                     </button>
-                    <button className="button" type="button">
+                    <button 
+                      className="button" 
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify(message, null, 2));
+                        alert("Log em formato JSON copiado para a área de transferência!");
+                      }}
+                    >
                       Copy Log
                     </button>
                   </div>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Newsreader:opsz,wght@6..72,400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#bfc8c9",
+                    "on-primary-fixed-variant": "#074f54",
+                    "inverse-primary": "#96d1d6",
+                    "primary-fixed-dim": "#96d1d6",
+                    "primary": "#003336",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#004f54",
+                    "surface-container-highest": "#e3e2e0",
+                    "primary-fixed": "#b1edf2",
+                    "inverse-surface": "#2f3130",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#e5e2e3",
+                    "secondary-fixed": "#8df2fc",
+                    "primary-container": "#004b50",
+                    "on-background": "#1a1c1b",
+                    "surface-container-low": "#f4f3f1",
+                    "on-tertiary-fixed-variant": "#474647",
+                    "tertiary-container": "#434344",
+                    "surface-dim": "#dadad8",
+                    "surface-variant": "#e3e2e0",
+                    "secondary": "#006970",
+                    "background": "#faf9f7",
+                    "outline": "#707979",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#2a676c",
+                    "inverse-on-surface": "#f1f1ef",
+                    "surface-container": "#efeeec",
+                    "on-secondary-fixed": "#002022",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#7fbabf",
+                    "tertiary": "#2d2d2e",
+                    "surface-container-high": "#e9e8e6",
+                    "on-surface-variant": "#404849",
+                    "on-tertiary-container": "#b2afb0",
+                    "on-tertiary-fixed": "#1b1b1c",
+                    "secondary-fixed-dim": "#6fd6df",
+                    "tertiary-fixed-dim": "#c8c6c7",
+                    "on-surface": "#1a1c1b",
+                    "on-secondary-container": "#006e75",
+                    "on-error-container": "#93000a",
+                    "secondary-container": "#8aeff9",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#faf9f7",
+                    "surface": "#faf9f7",
+                    "on-primary-fixed": "#002022",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "lg": "24px",
+                    "sm": "8px",
+                    "unit": "4px",
+                    "xl": "40px",
+                    "sidebar-width": "280px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "gutter": "12px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "mono": ["Inter"],
+                    "h2": ["Inter"],
+                    "display": ["Newsreader"],
+                    "label-sm": ["Inter"],
+                    "h1": ["Newsreader"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "mono": ["13px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "h2": ["20px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display": ["42px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                    "h1": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E5E5E3;
+            border-radius: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#F9F8F6] fixed top-0 w-full z-50 border-b border-[#E5E5E3] shadow-none flex justify-between items-center px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<button class="transition-all duration-150 active:scale-95 text-[#004B50] hover:bg-slate-100 p-1 rounded">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-serif text-sm font-bold tracking-tight text-[#004B50]">Pipeline Vendas</h1>
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-[10px] font-mono uppercase tracking-wider text-outline">Active • 4 Agents</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="transition-all duration-150 active:scale-95 text-[#004B50] hover:bg-slate-100 p-1 rounded">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="professional male portrait with neutral background for corporate profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZHeXneau8xxYstQtcCsKgoRdvevXrs8ivWUud03u6j_8X5WQbIKcIGRQXYS2MLCisB_GNALgu-h_iPt_KRN98C4Y-Q6ySFgW42Zt-1kEypQvtTlIFNdZ4viCJTnfDZJL72EL0N9x0zyA33rLQjbBxXRX4weX-7c6ziIh-3o_YKdUsEKJnaHs37eSZXvRC4dqWjWWkBwqD5lI4_QMJETCHos_UFLEbaGc_O34hP5w2B0sR0jCTBAtjNVd4Lhjt55n1YDkebjuUJTI"/>
+</div>
+</div>
+</header>
+<!-- Chat Canvas -->
+<main class="flex-1 overflow-y-auto pt-14 pb-32 px-4 space-y-gutter scroll-smooth">
+<!-- Timestamp Divider -->
+<div class="flex items-center justify-center py-6">
+<div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+<span class="px-3 font-mono text-[10px] uppercase text-outline tracking-widest">Today, 14:20</span>
+<div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+</div>
+<!-- System Log -->
+<div class="flex items-start gap-3 bg-surface-container-low p-3 rounded-lg border-l-2 border-primary">
+<span class="material-symbols-outlined text-[18px] text-primary" data-icon="terminal">terminal</span>
+<div class="flex flex-col gap-1">
+<span class="font-mono text-[11px] font-bold text-primary uppercase">System Protocol initiated</span>
+<p class="text-xs text-on-surface-variant font-mono">Loading lead scoring models for 'Pipeline Vendas'... Done. Encryption active.</p>
+</div>
+</div>
+<!-- User Message -->
+<div class="group flex flex-col gap-1 items-end pl-8">
+<div class="flex items-baseline gap-2 mb-1">
+<span class="font-mono text-[10px] text-outline">14:22</span>
+<span class="font-label-sm text-secondary uppercase">Operational Lead</span>
+</div>
+<div class="bg-surface-container-high p-4 rounded-xl rounded-tr-none text-on-surface text-body-md max-w-full shadow-sm">
+                Retrieve the performance summary for the Northeast region. Highlight any bottlenecks in the conversion funnel from last quarter.
+            </div>
+</div>
+<!-- Agent Response (Technical) -->
+<div class="group flex flex-col gap-2 pr-8">
+<div class="flex items-center gap-2 mb-1">
+<div class="w-6 h-6 bg-primary flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-[14px] text-white" data-icon="smart_toy">smart_toy</span>
+</div>
+<span class="font-label-sm text-primary uppercase">Analyst Agent v4.2</span>
+<span class="font-mono text-[10px] text-outline">14:23</span>
+</div>
+<div class="flex flex-col gap-3">
+<div class="text-on-surface text-body-md leading-relaxed">
+                    Analyzing Northeast sector performance data... I've identified a 14% drop in MQL to SQL transition rates in the Bahia cluster. 
+                </div>
+<!-- TTS Player Component -->
+<div class="flex items-center gap-3 bg-white border border-outline-variant p-2 rounded-lg">
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined text-[18px]" data-icon="play_arrow" data-weight="fill">play_arrow</span>
+</button>
+<div class="flex-1 h-1 bg-surface-container-highest rounded-full overflow-hidden relative">
+<div class="absolute left-0 top-0 h-full w-1/3 bg-secondary"></div>
+</div>
+<span class="font-mono text-[11px] text-outline">0:45</span>
+</div>
+<!-- Data Visualization/Insight Chip -->
+<div class="flex items-center gap-2 bg-secondary-container/30 p-2 rounded border border-secondary-container">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="analytics">analytics</span>
+<span class="text-xs font-mono font-medium text-on-secondary-container">View full sector analysis report (PDF)</span>
+<span class="material-symbols-outlined text-xs text-on-secondary-container ml-auto" data-icon="open_in_new">open_in_new</span>
+</div>
+</div>
+</div>
+<!-- System Alert -->
+<div class="flex items-center justify-center py-2">
+<div class="bg-error-container text-on-error-container px-3 py-1 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="error">error</span>
+<span class="font-mono text-[10px] font-bold uppercase">Latency detected in Server node-7</span>
+</div>
+</div>
+<!-- Agent Typing Indicator -->
+<div class="flex items-center gap-2 py-4">
+<div class="flex gap-1">
+<span class="w-1.5 h-1.5 bg-primary/40 rounded-full animate-pulse"></span>
+<span class="w-1.5 h-1.5 bg-primary/60 rounded-full animate-pulse [animation-delay:0.2s]"></span>
+<span class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse [animation-delay:0.4s]"></span>
+</div>
+<span class="font-mono text-[10px] text-outline uppercase tracking-wider italic">Strategic Agent is formulating response...</span>
+</div>
+</main>
+<!-- Interaction Dock (Floating Input Area) -->
+<div class="fixed bottom-16 left-0 w-full px-4 pb-4 pointer-events-none">
+<div class="bg-white border border-outline-variant shadow-xl rounded-xl pointer-events-auto flex items-end gap-2 p-2 max-w-full">
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+</button>
+<div class="flex-1 min-h-[40px] max-h-32 overflow-y-auto py-2 px-1">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-body-md placeholder:text-outline/60 resize-none" placeholder="Type command or message..." rows="1"></textarea>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+</button>
+<button class="w-10 h-10 bg-[#004B50] text-white rounded-lg flex items-center justify-center transition-all active:scale-95 shadow-md">
+<span class="material-symbols-outlined" data-icon="send" data-weight="fill">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="bg-[#F2F4F7] fixed bottom-0 w-full z-50 rounded-t-none border-t border-[#E5E5E3] shadow-none flex justify-around items-center h-16 w-full px-2">
+<button class="flex flex-col items-center justify-center text-[#004B50] font-bold transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="chat_bubble" data-weight="fill">chat_bubble</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Chat</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-[#004B50] transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Agents</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-[#004B50] transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Groups</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-[#004B50] transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Admin</span>
+</button>
+</nav>
+</body></html>

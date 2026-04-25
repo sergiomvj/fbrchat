@@ -114,13 +114,18 @@ export function DashboardView() {
           {visibleAgents.map((agent) => (
             <article key={agent.id} className="agent-card">
               <div className="agent-card__top">
+                <img src="/avatars/default_agent.png" alt="Agent Icon" style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8, display: "inline-block" }} />
                 <strong>{agent.name}</strong>
                 <span>@{agent.slug}</span>
               </div>
               <p>{agent.openclaw_config.model}</p>
               <div className="agent-card__footer">
                 <span>{agent.company_name}</span>
-                <button className="button" type="button">
+                <button 
+                  className="button" 
+                  type="button"
+                  onClick={() => alert(`Gerenciando agente ${agent.name}...`)}
+                >
                   Manage
                 </button>
               </div>
@@ -133,10 +138,29 @@ export function DashboardView() {
         <div className="directory-section__header">
           <h3>Operational Directory</h3>
           <div className="directory-section__actions">
-            <button className="button" type="button">
+            <button 
+              className="button" 
+              type="button"
+              onClick={() => {
+                const header = "Node Identity,Email Anchor,Authority,Protocol Status,Last Ingress\n";
+                const rowData = users.map(u => `${u.name},${u.email},${u.role},${u.is_active ? "Active" : "Inactive"},${u.last_seen || "Nunca"}`).join("\n");
+                const blob = new Blob([header + rowData], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "operational_directory_export.csv";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }}
+            >
               Export Registry
             </button>
-            <button className="button button--primary" type="button">
+            <button 
+              className="button button--primary" 
+              type="button"
+              onClick={() => alert("Abrindo painel de cadastro de usuário...")}
+            >
               Provision User
             </button>
           </div>

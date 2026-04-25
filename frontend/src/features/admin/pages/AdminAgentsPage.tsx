@@ -15,7 +15,7 @@ export function AdminAgentsPage() {
     <AdminPageLayout
       title="Agents"
       subtitle="Catalogo de agentes com filtro por empresa para facilitar a gestao."
-      actions={<button className="button button--primary">Novo Agente</button>}
+      actions={<button className="button button--primary" onClick={() => alert("Abrindo modal de novo Agente. Formulario ainda nao criado.")}>Novo Agente</button>}
     >
       <div className="filter-pills">
         {[{ id: "all", name: "Todas" }, ...companies].map((entry) => (
@@ -34,13 +34,18 @@ export function AdminAgentsPage() {
         {visibleAgents.map((agent) => (
           <article key={agent.id} className="agent-card">
             <div className="agent-card__top">
+              <img src="/avatars/default_agent.png" alt="Agent Icon" style={{ width: 24, height: 24, borderRadius: "50%", marginRight: 8, display: "inline-block" }} />
               <strong>{agent.name}</strong>
               <span>@{agent.slug}</span>
             </div>
             <p>{agent.openclaw_config.model}</p>
             <div className="agent-card__footer">
               <span>{agent.company_name}</span>
-              <button className="button" type="button">
+              <button 
+                className="button" 
+                type="button"
+                onClick={() => alert(`Carregando menu de edição para ${agent.name}...`)}
+              >
                 Editar
               </button>
             </div>

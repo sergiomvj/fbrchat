@@ -79,7 +79,12 @@ export function ChatSidebar({
               }
               type="button"
             >
-              <div className="agent-list__avatar" />
+              <img 
+                className="agent-list__avatar" 
+                src="/avatars/default_agent.png" 
+                alt="Agent Avatar" 
+                style={{ objectFit: "cover" }}
+              />
               <div>
                 <strong>{pvt.name}</strong>
                 <p>

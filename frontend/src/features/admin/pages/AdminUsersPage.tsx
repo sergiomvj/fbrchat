@@ -8,7 +8,7 @@ export function AdminUsersPage() {
     <AdminPageLayout
       title="Users"
       subtitle="Gestao de acesso, papeis e ultimo ingresso operacional."
-      actions={<button className="button button--primary">Novo Usuario</button>}
+      actions={<button className="button button--primary" onClick={() => alert("Abrindo painel de cadastro de usuário...")}>Novo Usuario</button>}
     >
       <table className="data-table">
         <thead>

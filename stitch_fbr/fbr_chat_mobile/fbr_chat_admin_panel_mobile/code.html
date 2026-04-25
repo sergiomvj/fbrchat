@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FBR CHAT Admin Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #faf9f7;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#bfc8c9",
+                      "on-primary-fixed-variant": "#074f54",
+                      "inverse-primary": "#96d1d6",
+                      "primary-fixed-dim": "#96d1d6",
+                      "primary": "#003336",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed-variant": "#004f54",
+                      "surface-container-highest": "#e3e2e0",
+                      "primary-fixed": "#b1edf2",
+                      "inverse-surface": "#2f3130",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#e5e2e3",
+                      "secondary-fixed": "#8df2fc",
+                      "primary-container": "#004b50",
+                      "on-background": "#1a1c1b",
+                      "surface-container-low": "#f4f3f1",
+                      "on-tertiary-fixed-variant": "#474647",
+                      "tertiary-container": "#434344",
+                      "surface-dim": "#dadad8",
+                      "surface-variant": "#e3e2e0",
+                      "secondary": "#006970",
+                      "background": "#faf9f7",
+                      "outline": "#707979",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-tint": "#2a676c",
+                      "inverse-on-surface": "#f1f1ef",
+                      "surface-container": "#efeeec",
+                      "on-secondary-fixed": "#002022",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#7fbabf",
+                      "tertiary": "#2d2d2e",
+                      "surface-container-high": "#e9e8e6",
+                      "on-surface-variant": "#404849",
+                      "on-tertiary-container": "#b2afb0",
+                      "on-tertiary-fixed": "#1b1b1c",
+                      "secondary-fixed-dim": "#6fd6df",
+                      "tertiary-fixed-dim": "#c8c6c7",
+                      "on-surface": "#1a1c1b",
+                      "on-secondary-container": "#006e75",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#8aeff9",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-bright": "#faf9f7",
+                      "surface": "#faf9f7",
+                      "on-primary-fixed": "#002022",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "lg": "24px",
+                      "sm": "8px",
+                      "unit": "4px",
+                      "xl": "40px",
+                      "sidebar-width": "280px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "gutter": "12px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter"],
+                      "mono": ["Inter"],
+                      "h2": ["Inter"],
+                      "display": ["Newsreader"],
+                      "label-sm": ["Inter"],
+                      "h1": ["Newsreader"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "body-lg": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "mono": ["13px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                      "h2": ["20px", {"lineHeight": "1.4", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "display": ["42px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                      "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "600"}],
+                      "h1": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                      "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface bg-background">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#F9F8F6] border-b border-[#E5E5E3] flex justify-between items-center px-4 h-14 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#004B50] transition-all duration-150 active:scale-95" data-icon="menu">menu</span>
+<span class="text-base font-black tracking-widest text-[#004B50] uppercase">FBR CHAT</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden">
+<img alt="Admin User" class="w-full h-full object-cover" data-alt="Close-up professional portrait of a tech administrator with clean studio lighting and neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5-RmsMICOLMnPMJWgSsfQilQL5pmyeOHqgZRHQ-PAoo5EZJoB4HROBU4D-b7luqFaMnirAvk1VZPsaXjoeOv3k6PJPnRQEOStYuVAHRNGqKg7umUXr_c6l7FAwyyRSAkH0gLN8SBd1lp2KFQP1oXZ8RTMR2vu2yzlMjpGLGvunR3AYlhxXCkSMePc2hPRi15lbTKI-WArHQL5fYaMsYKaZTda2EmeyhPPO65LxsLFNmehIfgFgffjHD9PwfMgOwAN4VIJu80pk5U"/>
+</div>
+</div>
+</header>
+<main class="pt-14 pb-20 px-4">
+<!-- Compact KPIs -->
+<section class="grid grid-cols-3 gap-2 py-4">
+<div class="bg-surface-container-lowest p-3 border border-[#E5E5E3] flex flex-col items-center justify-center">
+<span class="text-[10px] font-label-sm uppercase text-outline mb-1">Active</span>
+<span class="text-h2 font-h2 text-primary">1.2k</span>
+</div>
+<div class="bg-surface-container-lowest p-3 border border-[#E5E5E3] flex flex-col items-center justify-center">
+<span class="text-[10px] font-label-sm uppercase text-outline mb-1">Messages</span>
+<span class="text-h2 font-h2 text-primary">48k</span>
+</div>
+<div class="bg-surface-container-lowest p-3 border border-[#E5E5E3] flex flex-col items-center justify-center">
+<span class="text-[10px] font-label-sm uppercase text-outline mb-1">Cost</span>
+<span class="text-h2 font-h2 text-primary">$214</span>
+</div>
+</section>
+<!-- System Health -->
+<section class="mb-6">
+<div class="flex items-center justify-between mb-3">
+<h2 class="text-label-sm font-label-sm uppercase tracking-widest text-outline">System Health</h2>
+<div class="flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span class="text-[10px] font-mono text-secondary">All systems operational</span>
+</div>
+</div>
+<div class="space-y-2">
+<!-- PostgreSQL -->
+<div class="bg-surface-container-low border border-[#E5E5E3] p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline" data-icon="database">database</span>
+<div>
+<p class="text-body-md font-bold text-on-surface">PostgreSQL</p>
+<p class="text-[10px] font-mono text-outline">Latency: 12ms</p>
+</div>
+</div>
+<span class="text-[10px] font-mono bg-[#004B50] text-white px-2 py-0.5 rounded-sm">99.9%</span>
+</div>
+<!-- Redis -->
+<div class="bg-surface-container-low border border-[#E5E5E3] p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline" data-icon="memory">memory</span>
+<div>
+<p class="text-body-md font-bold text-on-surface">Redis Cache</p>
+<p class="text-[10px] font-mono text-outline">Hit Rate: 94.2%</p>
+</div>
+</div>
+<span class="text-[10px] font-mono bg-[#004B50] text-white px-2 py-0.5 rounded-sm">ACTIVE</span>
+</div>
+<!-- API Engine -->
+<div class="bg-surface-container-low border border-[#E5E5E3] p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline" data-icon="cloud_done">cloud_done</span>
+<div>
+<p class="text-body-md font-bold text-on-surface">API Engine</p>
+<p class="text-[10px] font-mono text-outline">Load: 24%</p>
+</div>
+</div>
+<span class="text-[10px] font-mono bg-[#004B50] text-white px-2 py-0.5 rounded-sm">OPTIMAL</span>
+</div>
+</div>
+</section>
+<!-- Operational Directory -->
+<section class="mb-6">
+<h2 class="text-label-sm font-label-sm uppercase tracking-widest text-outline mb-3">Live Agents</h2>
+<div class="border border-[#E5E5E3] overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high">
+<tr>
+<th class="px-3 py-2 text-[10px] font-label-sm uppercase text-outline">Agent</th>
+<th class="px-3 py-2 text-[10px] font-label-sm uppercase text-outline">Status</th>
+<th class="px-3 py-2 text-[10px] font-label-sm uppercase text-outline text-right">Action</th>
+</tr>
+</thead>
+<tbody class="bg-surface-container-lowest divide-y divide-[#E5E5E3]">
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-3 py-3">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-sm bg-surface-container-high overflow-hidden">
+<img alt="Agent" class="w-full h-full object-cover" data-alt="Headshot of a professional support agent in a clean office environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWIczO86cA838BQgwhGab7hxHuOsQY9AULFVvg-omS2MBdovHMVAM-HIAt7akljXHt1L0MvfjCVxNO5IqfNhi76hrbrgVGqFWIGE4Gtj9TSj-2hhQg7SE8C7zwo1hV-WL0zOuQqnTHrjg9Z-xBl5CZ3zxD11gxNTcbHZdMT4lEccx5EXQ3O5N7zMijO22qIRTv57pW9cGS49JfByStT8gUpkpM0n1q0irauDxSCPh9731y6vkFkAQFWkghLRelwChTdX-QZIkFBYM"/>
+</div>
+<span class="text-body-md font-medium text-primary">K. Vance</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span class="text-[10px] font-mono text-secondary uppercase">Busy</span>
+</div>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-3 py-3">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-sm bg-surface-container-high overflow-hidden">
+<img alt="Agent" class="w-full h-full object-cover" data-alt="Portrait of a focused female support specialist with neutral lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKFkGoipit_kt5P5LrA8MtwwF6uayLulO8uJzoSnKSyJYcgRg9Sd2nJyYBhMYMcDuffIY5-m57k-fJy5M3y-qPMWz75Yv65t-rMrCrRXAFQFrsnC_rPGzJlLblx-iQiR7sXwNSX3OnwvJpEd_u5x-9OsHnDJoiO_d9c1YxbLkiMI1U94a0w8x87iz6JY6h28C3JikTp5iW9qjt-7WE0h9RsMvIOTTjnlCf2msM8VPuG9Dtv-t08Dk7b5BscnphG3Qm8xP4QNy1-4w"/>
+</div>
+<span class="text-body-md font-medium text-primary">S. Chen</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+<span class="text-[10px] font-mono text-secondary uppercase">Idle</span>
+</div>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors duration-150">
+<td class="px-3 py-3">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-sm bg-surface-container-high overflow-hidden">
+<img alt="Agent" class="w-full h-full object-cover" data-alt="Minimalist portrait of a male tech worker with a soft gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClI3G15Z3Wifm1X54YQKOCBvhMPwCp7gKTl6WH4J2Z8yUDba1iMqT9gXj6i1IJg-E_-R7YgxgSCGMrqd2l43dJj_sNoE0nq4OtLomhefuhIaiQGyDJ_esFqLGzZt2HYKL3S-5YijXnqZ8TBsOVOEccfEltF4maWIQaG8dyZryWfJdt4KDlI2gnkJnMzYN_aZ5S19pXaHLWTWVWFVSh-6MrJuyNZbImid1tGxphN1MKhsJAYNrLPMuTN_qej_Fu0U0eYMqMGWeL-QM"/>
+</div>
+<span class="text-body-md font-medium text-primary">M. Rossi</span>
+</div>
+</td>
+<td class="px-3 py-3">
+<div class="flex items-center gap-1.5">
+<div class="w-1.5 h-1.5 rounded-full bg-outline"></div>
+<span class="text-[10px] font-mono text-outline uppercase">Offline</span>
+</div>
+</td>
+<td class="px-3 py-3 text-right">
+<span class="material-symbols-outlined text-outline text-lg" data-icon="more_vert">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- System Alerts -->
+<section class="mb-4">
+<h2 class="text-label-sm font-label-sm uppercase tracking-widest text-outline mb-3">Recent Logs</h2>
+<div class="bg-on-primary text-on-primary-container p-4 font-mono text-[11px] leading-relaxed border border-[#E5E5E3]">
+<div class="flex gap-2 mb-1">
+<span class="text-outline">14:22:01</span>
+<span class="text-[#008B94]">[AUTH]</span>
+<span>Admin login success: K_VANCE</span>
+</div>
+<div class="flex gap-2 mb-1">
+<span class="text-outline">14:21:45</span>
+<span class="text-secondary">[POSTGRES]</span>
+<span>Vacuum analyze completed (0.04s)</span>
+</div>
+<div class="flex gap-2">
+<span class="text-outline">14:20:12</span>
+<span class="text-error">[WARN]</span>
+<span>API spike detected in US-EAST-1</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 bg-[#F2F4F7] border-t border-[#E5E5E3] flex justify-around items-center h-16 w-full px-2">
+<button class="flex flex-col items-center justify-center text-slate-500 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Chat</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Agents</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Groups</span>
+</button>
+<button class="flex flex-col items-center justify-center text-[#004B50] font-bold transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-serif text-[10px] uppercase font-medium tracking-tighter mt-1">Admin</span>
+</button>
+</nav>
+</body></html>

@@ -34,7 +34,11 @@ export function ChatLayout() {
             onSelectRoom={selectRoom}
             pvts={bootstrap?.pvts ?? []}
           />
-          <button className="button button--primary" type="button">
+          <button 
+            className="button button--primary" 
+            type="button"
+            onClick={() => alert("Função 'Execute New' ativada! Abrindo catalogo de agentes...")}
+          >
             + Execute New
           </button>
         </div>
