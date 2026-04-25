@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { SearchField } from "../../components/shell/SearchField";
+import { BottomNavBar } from "../../components/shell/BottomNavBar";
 import { TopBar } from "../../components/shell/TopBar";
 import { AdminRuntimeProvider, useAdminRuntime } from "./AdminRuntime";
 import { AdminSidebar } from "./components/AdminSidebar";
@@ -34,6 +35,7 @@ function AdminShell() {
           <InspectionPanel />
         </div>
       </main>
+      <BottomNavBar />
     </div>
   );
 }

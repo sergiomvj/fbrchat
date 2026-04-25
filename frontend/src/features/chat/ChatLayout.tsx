@@ -4,6 +4,7 @@ import { useChatRuntime } from "./useChatRuntime";
 import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatWorkspace } from "./components/ChatWorkspace";
 import { ConversationContextPanel } from "./components/ConversationContextPanel";
+import { BottomNavBar } from "../../components/shell/BottomNavBar";
 
 export function ChatLayout() {
   const {
@@ -68,6 +69,7 @@ export function ChatLayout() {
           />
         </div>
       </main>
+      <BottomNavBar />
     </div>
   );
 }
