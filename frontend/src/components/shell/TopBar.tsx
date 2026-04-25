@@ -16,7 +16,12 @@ export function TopBar({
 }: TopBarProps) {
   return (
     <header className="topbar">
-      <h1 className="topbar__title">{title}</h1>
+      <div className="topbar__brand-wrap">
+        <button className="topbar__menu" onClick={() => alert("Acionaria a Drawer/Sidebar no Mobile")}>
+          <span className="material-symbols-outlined">menu</span>
+        </button>
+        <h1 className="topbar__title">{title}</h1>
+      </div>
       <div className="topbar__meta">
         {search}
         <StatusPill label={statusLabel} />

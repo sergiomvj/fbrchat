@@ -799,6 +799,78 @@ button {
   background: var(--color-surface);
 }
 
+.topbar__menu {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-accent);
+  padding: var(--space-1);
+}
+
+.topbar__brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding: 0 var(--space-3);
+  }
+
+  .topbar__menu {
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+  }
+  .topbar__menu:active {
+    background: var(--color-surface-muted);
+  }
+
+  .chat-layout__body,
+  .admin-layout__body {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-layout__body {
+    padding-bottom: 70px; /* Para mostrar o bottom-nav */
+  }
+  
+  .message-list {
+    padding-bottom: 200px; /* Acomodar o Composer flutuante */
+  }
+
+  .composer {
+    position: fixed;
+    bottom: 80px; /* Acima do Bottom Nav */
+    left: 8px;
+    right: 8px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    z-index: 30;
+    padding: var(--space-3);
+    border: 1px solid var(--color-border-subtle);
+  }
+
+  .composer__input {
+    min-height: 48px;
+    height: 48px;
+    font-size: 14px;
+    padding: var(--space-3);
+  }
+
+  /* Exibe o painel de contexto um embaixo do outro e não a direita */
+  .context-panel {
+    border-left: 0;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-bottom: 120px; /* Evitar conflito com Dock */
+  }
+}
+
+
 .chart-panel__bars {
   display: flex;
   align-items: end;
