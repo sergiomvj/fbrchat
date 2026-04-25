@@ -5,6 +5,8 @@ import { ChatSidebar } from "./components/ChatSidebar";
 import { ChatWorkspace } from "./components/ChatWorkspace";
 import { ConversationContextPanel } from "./components/ConversationContextPanel";
 import { BottomNavBar } from "../../components/shell/BottomNavBar";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { MobileChatLayout } from "./MobileChatLayout";
 
 export function ChatLayout() {
   const {
@@ -19,6 +21,18 @@ export function ChatLayout() {
     selectRoom,
     submitMessage
   } = useChatRuntime();
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  if (isMobile) {
+    return (
+      <MobileChatLayout 
+        activeRoom={activeRoom}
+        messages={messages}
+        onSendMessage={submitMessage}
+      />
+    );
+  }
 
   return (
     <div className="shell chat-layout">
