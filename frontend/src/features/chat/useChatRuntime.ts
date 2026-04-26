@@ -1,4 +1,5 @@
-import { startTransition, useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { Socket } from "socket.io-client";
 import {
   connectChatSocket,
@@ -55,6 +56,7 @@ function toPreview(message: ChatMessage) {
 }
 
 export function useChatRuntime() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [token, setToken] = useState<string | null>(null);
   const [bootstrap, setBootstrap] = useState<ChatBootstrapPayload | null>(null);
   const [activeRoom, setActiveRoom] = useState<RoomRef | null>(null);
@@ -68,6 +70,28 @@ export function useChatRuntime() {
   const [error, setError] = useState<string | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const activeRoomRef = useRef<RoomRef | null>(null);
+  const requestedPvtId = searchParams.get("pvt_id");
+  const requestedGroupId = searchParams.get("group_id");
+
+  const requestedRoom = useMemo(() => {
+    if (!bootstrap) return null;
+
+    if (requestedPvtId) {
+      const pvt = bootstrap.pvts.find((entry) => entry.id === requestedPvtId);
+      if (pvt) {
+        return roomFromSummary(pvt);
+      }
+    }
+
+    if (requestedGroupId) {
+      const group = bootstrap.groups.find((entry) => entry.id === requestedGroupId);
+      if (group) {
+        return roomFromSummary(group);
+      }
+    }
+
+    return null;
+  }, [bootstrap, requestedGroupId, requestedPvtId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,11 +106,22 @@ export function useChatRuntime() {
         if (cancelled) return;
 
         setBootstrap(payload);
-        const initialRoom = payload.groups[0]
-          ? roomFromSummary(payload.groups[0])
-          : payload.pvts[0]
-            ? roomFromSummary(payload.pvts[0])
-            : null;
+        const requestedPvt = requestedPvtId
+          ? payload.pvts.find((entry) => entry.id === requestedPvtId)
+          : null;
+        const requestedGroup = requestedGroupId
+          ? payload.groups.find((entry) => entry.id === requestedGroupId)
+          : null;
+
+        const initialRoom = requestedPvt
+          ? roomFromSummary(requestedPvt)
+          : requestedGroup
+            ? roomFromSummary(requestedGroup)
+            : payload.groups[0]
+              ? roomFromSummary(payload.groups[0])
+              : payload.pvts[0]
+                ? roomFromSummary(payload.pvts[0])
+                : null;
         setActiveRoom(initialRoom);
       } catch (runtimeError) {
         if (!cancelled) {
@@ -107,7 +142,19 @@ export function useChatRuntime() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [requestedGroupId, requestedPvtId]);
+
+  useEffect(() => {
+    if (!requestedRoom) return;
+    if (
+      activeRoomRef.current?.id === requestedRoom.id &&
+      activeRoomRef.current?.type === requestedRoom.type
+    ) {
+      return;
+    }
+
+    setActiveRoom(requestedRoom);
+  }, [requestedRoom]);
 
   useEffect(() => {
     if (!token) return;
@@ -205,6 +252,24 @@ export function useChatRuntime() {
   useEffect(() => {
     activeRoomRef.current = activeRoom;
   }, [activeRoom]);
+
+  useEffect(() => {
+    if (!activeRoom) return;
+
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (activeRoom.type === "pvt") {
+      nextParams.set("pvt_id", activeRoom.id);
+      nextParams.delete("group_id");
+    } else {
+      nextParams.set("group_id", activeRoom.id);
+      nextParams.delete("pvt_id");
+    }
+
+    if (nextParams.toString() !== searchParams.toString()) {
+      setSearchParams(nextParams, { replace: true });
+    }
+  }, [activeRoom, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (!token || !activeRoom) return;
