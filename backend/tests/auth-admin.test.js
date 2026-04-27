@@ -6,6 +6,7 @@ import { createMessageGateway } from "../src/socket/message-gateway.js";
 
 let server;
 let baseUrl;
+const originalFetch = global.fetch;
 
 beforeEach(async () => {
   memoryStore.reset();
@@ -161,6 +162,158 @@ test("admin can filter agents by company", async () => {
   assert.equal(response.status, 200);
   assert.equal(body.length, 2);
   assert.ok(body.every((agent) => agent.company_slug === "fbr-holding"));
+});
+
+test("admin can include agent by fbrchat_id with defaults", async () => {
+  const loginResponse = await login("admin@fbr.local", "admin123");
+
+  const response = await fetch(`${baseUrl}/api/admin/agents/include-by-id`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${loginResponse.body.access_token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fbrchat_id: "agt_37402cbba8fc461fa9ed23ec8a4532d0"
+    })
+  });
+
+  const body = await response.json();
+
+  assert.equal(response.status, 201);
+  assert.equal(body.status, "created");
+  assert.equal(body.agent.id, "agt_37402cbba8fc461fa9ed23ec8a4532d0");
+  assert.equal(body.agent.provider_agent_id, "agt_37402cbba8fc461fa9ed23ec8a4532d0");
+  assert.equal(body.agent.company_slug, "fbr-holding");
+});
+
+test("admin can include agent by fbrchat_id using ARVA resolve-agent payload", async () => {
+  const loginResponse = await login("admin@fbr.local", "admin123");
+  const previousApiUrl = process.env.ARVA_API_URL;
+  const previousToken = process.env.ARVA_FBRCHAT_SHARED_TOKEN;
+
+  process.env.ARVA_API_URL = "https://arva.example.com";
+  process.env.ARVA_FBRCHAT_SHARED_TOKEN = "sync-token";
+
+  global.fetch = async (url, options = {}) => {
+    if (url === "https://arva.example.com/api/integrations/fbrchat/resolve-agent") {
+      assert.equal(options.method, "POST");
+      assert.equal(options.headers.Authorization, "Bearer sync-token");
+      return new Response(
+        JSON.stringify({
+          fbrchat_id: "agt_sync_001",
+          arva_agent_id: "arva_sync_001",
+          provider: "openclaw",
+          provider_agent_id: "provider_sync_001",
+          status: "active",
+          identity: {
+            name: "Raissa Almenda",
+            slug: "raissa-almenda",
+            avatar_url: "https://example.com/raissa.png",
+            role: "SDR Senior",
+            company_slug: "arva-platform",
+            owner_company_id: "owner-001",
+            owner_company_name: "FBR Leads"
+          },
+          persona: {
+            short_description: "Agente comercial focada em pipeline.",
+            perfil_geral: "Objetiva e analitica.",
+            objetivo: "Gerar oportunidades qualificadas.",
+            responsabilidades: ["qualificar leads"],
+            competencias_centrais: ["follow-up"],
+            tom: "profissional",
+            tags: ["comercial"]
+          },
+          runtime: {
+            model: "z-ai/glm-4.7",
+            system_prompt: "Voce e a Raissa.",
+            tts_enabled: true,
+            tts_voice_id: "pt-br-01",
+            openclaw_config: {
+              model: "z-ai/glm-4.7",
+              api_key_ref: "OPENCLAW_RAISSA_KEY"
+            }
+          },
+          performance: {
+            score: 87,
+            tier: "A"
+          }
+        }),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    return originalFetch(url, options);
+  };
+
+  try {
+    const response = await fetch(`${baseUrl}/api/admin/agents/include-by-id`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${loginResponse.body.access_token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        fbrchat_id: "agt_sync_001"
+      })
+    });
+
+    const body = await response.json();
+
+    assert.equal(response.status, 201);
+    assert.equal(body.status, "created");
+    assert.equal(body.agent.id, "agt_sync_001");
+    assert.equal(body.agent.name, "Raissa Almenda");
+    assert.equal(body.agent.company_slug, "arva-platform");
+    assert.equal(body.agent.sync_source, "arva");
+    assert.equal(body.agent.role, "SDR Senior");
+    assert.equal(body.agent.runtime_profile.model, "z-ai/glm-4.7");
+    assert.equal(body.agent.performance_profile.tier, "A");
+  } finally {
+    global.fetch = originalFetch;
+    if (previousApiUrl === undefined) {
+      delete process.env.ARVA_API_URL;
+    } else {
+      process.env.ARVA_API_URL = previousApiUrl;
+    }
+    if (previousToken === undefined) {
+      delete process.env.ARVA_FBRCHAT_SHARED_TOKEN;
+    } else {
+      process.env.ARVA_FBRCHAT_SHARED_TOKEN = previousToken;
+    }
+  }
+});
+
+test("including same fbrchat_id twice returns existing agent", async () => {
+  const loginResponse = await login("admin@fbr.local", "admin123");
+
+  await fetch(`${baseUrl}/api/admin/agents/include-by-id`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${loginResponse.body.access_token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fbrchat_id: "agt_37402cbba8fc461fa9ed23ec8a4532d0"
+    })
+  });
+
+  const response = await fetch(`${baseUrl}/api/admin/agents/include-by-id`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${loginResponse.body.access_token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fbrchat_id: "agt_37402cbba8fc461fa9ed23ec8a4532d0"
+    })
+  });
+
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(body.status, "existing");
+  assert.equal(body.agent.id, "agt_37402cbba8fc461fa9ed23ec8a4532d0");
 });
 
 test("refresh rotates token", async () => {

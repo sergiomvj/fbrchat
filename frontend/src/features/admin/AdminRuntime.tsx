@@ -28,9 +28,13 @@ type AdminAgent = {
   id: string;
   name: string;
   slug: string;
+  provider: string | null;
+  provider_agent_id: string | null;
+  arva_agent_id: string | null;
   company_id: string;
   company_slug: string | null;
   company_name: string | null;
+  description?: string | null;
   openclaw_config: {
     model: string;
     api_key_ref: string;
@@ -76,6 +80,9 @@ type AdminRuntimeValue = {
   error: string | null;
   refresh: () => Promise<void>;
   saveSettings: (payload: Partial<AdminSettings>) => Promise<void>;
+  includeAgentById: (
+    fbrchatId: string
+  ) => Promise<{ status: "created" | "existing"; agent: AdminAgent }>;
 };
 
 const AdminRuntimeContext = createContext<AdminRuntimeValue | null>(null);
@@ -160,6 +167,28 @@ export function AdminRuntimeProvider({ children }: PropsWithChildren) {
     setSettings(updated);
   }
 
+  async function includeAgentById(fbrchatId: string) {
+    if (!token) {
+      throw new Error("Admin token indisponivel");
+    }
+
+    const response = await apiRequest<{ status: "created" | "existing"; agent: AdminAgent }>(
+      "/api/admin/agents/include-by-id",
+      {
+        method: "POST",
+        token,
+        body: JSON.stringify({ fbrchat_id: fbrchatId })
+      }
+    );
+
+    setAgents((current) => {
+      const withoutCurrent = current.filter((agent) => agent.id !== response.agent.id);
+      return [response.agent, ...withoutCurrent];
+    });
+
+    return response;
+  }
+
   return (
     <AdminRuntimeContext.Provider
       value={{
@@ -173,7 +202,8 @@ export function AdminRuntimeProvider({ children }: PropsWithChildren) {
         isLoading,
         error,
         refresh: () => refresh(),
-        saveSettings
+        saveSettings,
+        includeAgentById
       }}
     >
       {children}

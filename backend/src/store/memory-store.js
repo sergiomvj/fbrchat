@@ -15,7 +15,15 @@ function createInitialAgents() {
     ...agent,
     avatar_url: null,
     description: null,
+    role: null,
+    owner_company_id: null,
+    owner_company_name: null,
     is_active: true,
+    sync_source: null,
+    last_synced_at: null,
+    persona_profile: null,
+    runtime_profile: null,
+    performance_profile: null,
     openclaw_config: {
       model: "claude-3-5-sonnet",
       system_prompt: `Você é ${agent.name}.`,
@@ -348,12 +356,20 @@ export const memoryStore = {
       provider_agent_id: payload.provider_agent_id ?? null,
       arva_agent_id: payload.arva_agent_id ?? null,
       company_id: payload.company_id,
+      role: payload.role ?? null,
+      owner_company_id: payload.owner_company_id ?? null,
+      owner_company_name: payload.owner_company_name ?? null,
       avatar_url: payload.avatar_url ?? null,
       description: payload.description ?? null,
       openclaw_config: payload.openclaw_config,
       tts_enabled: payload.tts_enabled ?? false,
       tts_voice_id: payload.tts_voice_id ?? null,
       is_active: payload.is_active ?? true,
+      sync_source: payload.sync_source ?? null,
+      last_synced_at: payload.last_synced_at ?? null,
+      persona_profile: payload.persona_profile ?? null,
+      runtime_profile: payload.runtime_profile ?? null,
+      performance_profile: payload.performance_profile ?? null,
       created_at: new Date().toISOString()
     };
 
@@ -367,17 +383,25 @@ export const memoryStore = {
       Object.assign(existing, {
         name: payload.name,
         slug: payload.slug,
-        provider: payload.provider,
-        provider_agent_id: payload.provider_agent_id,
-        arva_agent_id: payload.arva_agent_id,
-        company_id: payload.company_id,
-        avatar_url: payload.avatar_url ?? null,
-        description: payload.description ?? null,
-        openclaw_config: payload.openclaw_config,
-        tts_enabled: payload.tts_enabled ?? false,
-        tts_voice_id: payload.tts_voice_id ?? null,
-        is_active: payload.is_active ?? true
-      });
+          provider: payload.provider,
+          provider_agent_id: payload.provider_agent_id,
+          arva_agent_id: payload.arva_agent_id,
+          company_id: payload.company_id,
+          role: payload.role ?? null,
+          owner_company_id: payload.owner_company_id ?? null,
+          owner_company_name: payload.owner_company_name ?? null,
+          avatar_url: payload.avatar_url ?? null,
+          description: payload.description ?? null,
+          openclaw_config: payload.openclaw_config,
+          tts_enabled: payload.tts_enabled ?? false,
+          tts_voice_id: payload.tts_voice_id ?? null,
+          is_active: payload.is_active ?? true,
+          sync_source: payload.sync_source ?? "arva",
+          last_synced_at: payload.last_synced_at ?? new Date().toISOString(),
+          persona_profile: payload.persona_profile ?? null,
+          runtime_profile: payload.runtime_profile ?? null,
+          performance_profile: payload.performance_profile ?? null
+        });
 
       return { agent: existing, status: "updated" };
     }

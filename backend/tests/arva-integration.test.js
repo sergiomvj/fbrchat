@@ -33,21 +33,34 @@ function integrationHeaders() {
   };
 }
 
-test("ARVA can provision a new agent using fbrchat_id as canonical id", async () => {
-  const response = await fetch(`${baseUrl}/api/integrations/arva/agents/upsert`, {
-    method: "POST",
-    headers: integrationHeaders(),
-    body: JSON.stringify({
-      fbrchat_id: "33333333-3333-3333-3333-333333333333",
-      arva_agent_id: "arva_001",
-      provider: "openclaw",
-      provider_agent_id: "oclw_arva_001",
-      company_slug: "fbr-holding",
+function richAgentPayload(overrides = {}) {
+  return {
+    fbrchat_id: "33333333-3333-3333-3333-333333333333",
+    arva_agent_id: "arva_001",
+    provider: "openclaw",
+    provider_agent_id: "oclw_arva_001",
+    status: "active",
+    identity: {
       name: "Agente ARVA",
       slug: "agente-arva",
       avatar_url: null,
-      description: "Provisionado pelo ARVA",
-      status: "active",
+      role: "SDR Senior",
+      company_slug: "fbr-holding",
+      owner_company_id: "owner-001",
+      owner_company_name: "FBR Leads"
+    },
+    persona: {
+      short_description: "Provisionado pelo ARVA",
+      perfil_geral: "Agente comercial experiente.",
+      objetivo: "Qualificar oportunidades.",
+      responsabilidades: ["qualificar leads"],
+      competencias_centrais: ["follow-up"],
+      tom: "profissional",
+      tags: ["comercial"]
+    },
+    runtime: {
+      model: "claude-3-5-sonnet",
+      system_prompt: "Voce e o agente ARVA",
       tts_enabled: true,
       tts_voice_id: "pt-br-01",
       openclaw_config: {
@@ -57,60 +70,93 @@ test("ARVA can provision a new agent using fbrchat_id as canonical id", async ()
         max_tokens: 1200,
         api_key_ref: "OPENCLAW_ARVA_KEY"
       }
-    })
+    },
+    performance: {
+      score: 87,
+      tier: "A"
+    },
+    ...overrides
+  };
+}
+
+test("ARVA can provision a new agent using fbrchat_id as canonical id", async () => {
+  const response = await fetch(`${baseUrl}/api/integrations/arva/agents/upsert`, {
+    method: "POST",
+    headers: integrationHeaders(),
+    body: JSON.stringify(richAgentPayload())
   });
 
   const body = await response.json();
+  const agent = memoryStore.findAgentById(body.agent_id);
 
   assert.equal(response.status, 200);
   assert.equal(body.agent_id, "33333333-3333-3333-3333-333333333333");
   assert.equal(body.status, "created");
-  assert.equal(memoryStore.findAgentById(body.agent_id)?.arva_agent_id, "arva_001");
+  assert.equal(agent?.arva_agent_id, "arva_001");
+  assert.equal(agent?.role, "SDR Senior");
+  assert.equal(agent?.performance_profile?.tier, "A");
 });
 
 test("ARVA upsert updates an existing provisioned agent", async () => {
   await fetch(`${baseUrl}/api/integrations/arva/agents/upsert`, {
     method: "POST",
     headers: integrationHeaders(),
-    body: JSON.stringify({
+    body: JSON.stringify(richAgentPayload({
       fbrchat_id: "44444444-4444-4444-4444-444444444444",
       arva_agent_id: "arva_002",
-      provider: "openclaw",
       provider_agent_id: "oclw_arva_002",
-      company_slug: "fbr-holding",
-      name: "Agente ARVA 2",
-      slug: "agente-arva-2",
-      status: "active",
-      tts_enabled: false,
-      tts_voice_id: null,
-      openclaw_config: {
+      identity: {
+        name: "Agente ARVA 2",
+        slug: "agente-arva-2",
+        avatar_url: null,
+        role: "SDR",
+        company_slug: "fbr-holding",
+        owner_company_id: "owner-001",
+        owner_company_name: "FBR Leads"
+      },
+      runtime: {
         model: "claude-3-5-sonnet",
         system_prompt: "Inicial",
-        api_key_ref: "OPENCLAW_ARVA_KEY"
+        tts_enabled: false,
+        tts_voice_id: null,
+        openclaw_config: {
+          model: "claude-3-5-sonnet",
+          system_prompt: "Inicial",
+          api_key_ref: "OPENCLAW_ARVA_KEY"
+        }
       }
-    })
+    }))
   });
 
   const response = await fetch(`${baseUrl}/api/integrations/arva/agents/upsert`, {
     method: "POST",
     headers: integrationHeaders(),
-    body: JSON.stringify({
+    body: JSON.stringify(richAgentPayload({
       fbrchat_id: "44444444-4444-4444-4444-444444444444",
       arva_agent_id: "arva_002",
-      provider: "openclaw",
       provider_agent_id: "oclw_arva_002",
-      company_slug: "global-tech",
-      name: "Agente ARVA 2 Atualizado",
-      slug: "agente-arva-2",
       status: "inactive",
-      tts_enabled: true,
-      tts_voice_id: "voice-002",
-      openclaw_config: {
+      identity: {
+        name: "Agente ARVA 2 Atualizado",
+        slug: "agente-arva-2",
+        avatar_url: null,
+        role: "Closer",
+        company_slug: "global-tech",
+        owner_company_id: "owner-002",
+        owner_company_name: "Global Tech"
+      },
+      runtime: {
         model: "claude-3-5-sonnet",
         system_prompt: "Atualizado",
-        api_key_ref: "OPENCLAW_ARVA_KEY"
+        tts_enabled: true,
+        tts_voice_id: "voice-002",
+        openclaw_config: {
+          model: "claude-3-5-sonnet",
+          system_prompt: "Atualizado",
+          api_key_ref: "OPENCLAW_ARVA_KEY"
+        }
       }
-    })
+    }))
   });
 
   const body = await response.json();
@@ -121,6 +167,7 @@ test("ARVA upsert updates an existing provisioned agent", async () => {
   assert.equal(agent?.name, "Agente ARVA 2 Atualizado");
   assert.equal(agent?.is_active, false);
   assert.equal(agent?.company_id, "22222222-2222-2222-2222-222222222222");
+  assert.equal(agent?.role, "Closer");
 });
 
 test("ARVA can open direct chat with provisioned agent and receives canonical pvt", async () => {
