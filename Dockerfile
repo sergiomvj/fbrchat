@@ -2,6 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Instala dependências do sistema necessárias para o Prisma
+RUN apk add --no-cache openssl
+
 # Otimizações de produção
 ENV NODE_ENV=production
 

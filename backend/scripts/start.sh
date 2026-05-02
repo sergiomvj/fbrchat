@@ -3,11 +3,12 @@
 set -e
 
 echo "Checking environment..."
-if [ -z "$DATABASE_URL" ]; then
+if [ -n "$DATABASE_URL" ]; then
+  echo "DATABASE_URL is present. Creating .env file..."
+  echo "DATABASE_URL=\"$DATABASE_URL\"" > .env
+else
   echo "ERROR: DATABASE_URL is not set in environment!"
   env | grep _URL || true
-else
-  echo "DATABASE_URL is present."
 fi
 
 echo "Generating Prisma Client..."
