@@ -2,9 +2,6 @@
 
 set -e
 
-echo "Adjusting permissions..."
-chmod +x ./node_modules/.bin/prisma
-
 echo "Syncing database schema..."
 npx prisma db push --accept-data-loss
 
