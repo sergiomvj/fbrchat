@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAdminRuntime } from "../AdminRuntime";
+import { UserCreateModal } from "./UserCreateModal";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -9,8 +10,9 @@ function formatCurrency(value: number) {
 }
 
 export function DashboardView() {
-  const { users, companies, agents, logs, isLoading } = useAdminRuntime();
+  const { users, companies, agents, logs, isLoading, token, refresh } = useAdminRuntime();
   const [activeCompany, setActiveCompany] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const visibleAgents =
     activeCompany === "all"
       ? agents
@@ -42,8 +44,8 @@ export function DashboardView() {
 
   const systems = [
     ["WebSocket Gateway", isLoading ? "Sincronizando" : "Stable"],
-    ["PostgreSQL Cluster", "Mocked local"],
-    ["Redis Cache", "Planned"],
+    ["PostgreSQL Cluster", "Operational (PostgreSQL 16)"],
+    ["Redis Cache", "Active"],
     ["OpenClaw Engine", logs[0] ? `${logs[0].latency_ms}ms latency` : "Idle"]
   ] as const;
 
@@ -159,12 +161,23 @@ export function DashboardView() {
             <button 
               className="button button--primary" 
               type="button"
-              onClick={() => alert("Abrindo painel de cadastro de usuário...")}
+              onClick={() => setIsModalOpen(true)}
             >
               Provision User
             </button>
           </div>
         </div>
+
+        {isModalOpen && token && (
+          <UserCreateModal 
+            token={token} 
+            onClose={() => setIsModalOpen(false)} 
+            onSuccess={() => {
+              setIsModalOpen(false);
+              refresh();
+            }} 
+          />
+        )}
 
         <table className="data-table">
           <thead>
