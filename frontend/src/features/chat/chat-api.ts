@@ -61,7 +61,6 @@ export function sendRoomMessage(
 
 export function connectChatSocket(token: string): Socket {
   return io(getApiBaseUrl(), {
-    transports: ["websocket"],
     auth: { token }
   });
 }
