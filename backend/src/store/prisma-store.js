@@ -77,6 +77,20 @@ export const prismaStore = {
     });
   },
 
+  async updateCompany(id, payload) {
+    return prisma.company.update({
+      where: { id },
+      data: payload
+    });
+  },
+
+  async deactivateCompany(id) {
+    return prisma.company.update({
+      where: { id },
+      data: { is_active: false }
+    });
+  },
+
   // Agents
   async listAgents() {
     return prisma.agent.findMany();
@@ -422,6 +436,16 @@ export const prismaStore = {
         payload: payload.payload,
         response: payload.response
       }
+    });
+  },
+
+  async listOpenclawLogs({ agentId, status } = {}) {
+    return prisma.openclawLog.findMany({
+      where: {
+        ...(agentId ? { agent_id: agentId } : {}),
+        ...(status ? { status: status } : {})
+      },
+      orderBy: { created_at: "desc" }
     });
   },
 
