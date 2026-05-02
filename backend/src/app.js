@@ -25,6 +25,21 @@ export function createApp(messageGateway = null) {
   app.use(securityHeaders);
   app.use(express.json());
 
+  app.use("/api/auth", authRouter);
+  app.use("/api/bootstrap", bootstrapRouter);
+  app.use("/api/admin/companies", adminCompaniesRouter);
+  app.use("/api/admin/users", adminUsersRouter);
+  app.use("/api/admin/agents", adminAgentsRouter);
+  app.use("/api/admin/settings", adminSettingsRouter);
+  app.use("/api/admin/logs", adminLogsRouter);
+  app.use("/api/groups", groupsRouter);
+  app.use("/api/pvt", pvtRouter);
+  app.use("/api/uploads", uploadsRouter);
+  app.use("/api/integrations/arva", integrationsArvaRouter);
+  if (messageGateway) {
+    app.use("/api/messages", createMessagesRouter(messageGateway));
+  }
+
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
   
@@ -40,21 +55,6 @@ export function createApp(messageGateway = null) {
       timestamp: new Date().toISOString()
     });
   });
-
-  app.use("/api/auth", authRouter);
-  app.use("/api/bootstrap", bootstrapRouter);
-  app.use("/api/admin/companies", adminCompaniesRouter);
-  app.use("/api/admin/users", adminUsersRouter);
-  app.use("/api/admin/agents", adminAgentsRouter);
-  app.use("/api/admin/settings", adminSettingsRouter);
-  app.use("/api/admin/logs", adminLogsRouter);
-  app.use("/api/groups", groupsRouter);
-  app.use("/api/pvt", pvtRouter);
-  app.use("/api/uploads", uploadsRouter);
-  app.use("/api/integrations/arva", integrationsArvaRouter);
-  if (messageGateway) {
-    app.use("/api/messages", createMessagesRouter(messageGateway));
-  }
 
   app.use((error, _req, res, _next) => {
     console.error("[backend] unhandled error", error);

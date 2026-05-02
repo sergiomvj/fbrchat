@@ -1,15 +1,35 @@
+import { useState } from "react";
 import { useAdminRuntime } from "../AdminRuntime";
 import { AdminPageLayout } from "../components/AdminPageLayout";
+import { UserCreateModal } from "../components/UserCreateModal";
 
 export function AdminUsersPage() {
-  const { users } = useAdminRuntime();
+  const { users, token, refresh } = useAdminRuntime();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <AdminPageLayout
       title="Users"
       subtitle="Gestao de acesso, papeis e ultimo ingresso operacional."
-      actions={<button className="button button--primary" onClick={() => alert("Abrindo painel de cadastro de usuário...")}>Novo Usuario</button>}
+      actions={
+        <button 
+          className="button button--primary" 
+          onClick={() => setIsModalOpen(true)}
+        >
+          Novo Usuario
+        </button>
+      }
     >
+      {isModalOpen && token && (
+        <UserCreateModal 
+          token={token} 
+          onClose={() => setIsModalOpen(false)} 
+          onSuccess={() => {
+            setIsModalOpen(false);
+            refresh();
+          }} 
+        />
+      )}
       <table className="data-table">
         <thead>
           <tr>
