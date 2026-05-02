@@ -5,8 +5,11 @@ import { createMessageGateway } from "./message-gateway.js";
 export function attachSocketServer(server) {
   const io = new Server(server, {
     cors: {
-      origin: "*"
-    }
+      origin: true, // Permite a origem de quem está conectando
+      methods: ["GET", "POST"],
+      credentials: true
+    },
+    allowEIO3: true // Compatibilidade extra
   });
 
   const messageGateway = createMessageGateway(io);
