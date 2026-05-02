@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "node src/server.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
     "test": "node tests/auth-admin.test.js && node tests/conversations.test.js && node tests/context-media.test.js && node tests/arva-integration.test.js"
   },
   "dependencies": {
