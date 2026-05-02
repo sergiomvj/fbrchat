@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "node src/server.js",
     "start": "node src/server.js",
-    "test": "node tests/auth-admin.test.js && node tests/conversations.test.js && node tests/context-media.test.js && node tests/arva-integration.test.js",
-    "postinstall": "prisma generate"
+    "test": "node tests/auth-admin.test.js && node tests/conversations.test.js && node tests/context-media.test.js && node tests/arva-integration.test.js"
   },
+  "dependencies": {
     "@prisma/client": "^5.12.1",
     "prisma": "^5.12.1",
     "express": "^4.21.2",
