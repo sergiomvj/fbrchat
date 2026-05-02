@@ -9,12 +9,12 @@ const app = createApp(messageGateway);
 
 server.on("request", app);
 
-server.listen(port, () => {
+server.listen(port, "0.0.0.0", () => {
   const address = server.address();
   const resolvedPort =
     typeof address === "object" && address !== null ? address.port : port;
 
-  console.log(`[backend] listening on http://localhost:${resolvedPort}`);
+  console.log(`[backend] listening on http://0.0.0.0:${resolvedPort}`);
 });
 
 server.on("error", (error) => {
