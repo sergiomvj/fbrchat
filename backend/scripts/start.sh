@@ -21,4 +21,4 @@ echo "Running seed..."
 npm run db:seed
 
 echo "Starting application..."
-npm start
+node src/server.js
