@@ -1,5 +1,17 @@
-FROM node:20-alpine
+# Stage 1: Build Frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app/frontend
+# Copia arquivos de dependência do frontend
+COPY frontend/package*.json ./
+# Instala todas as dependências (necessário para o build)
+RUN npm install
+# Copia o código fonte do frontend
+COPY frontend/ ./
+# Gera o build de produção (pasta dist)
+RUN npm run build
 
+# Stage 2: Final Image (Backend + Frontend Assets)
+FROM node:20-alpine
 WORKDIR /app
 
 # Instala dependências do sistema necessárias para o Prisma
@@ -12,13 +24,16 @@ ENV NODE_ENV=production
 COPY backend/package*.json ./
 COPY backend/prisma ./prisma/
 
-# Instala apenas dependências de produção
+# Instala dependências de produção do backend
 RUN npm ci --only=production
 
 # Copia o código fonte do backend
 COPY backend/ .
 
-# Porta padrão do FBR Chat backend
+# Copia o build do frontend gerado no Stage 1 para a pasta que o backend espera
+COPY --from=frontend-builder /app/frontend/dist /app/frontend/dist
+
+# Porta padrão do FBR Chat (Backend serve o Frontend aqui)
 EXPOSE 3000
 
 # Garantir permissão de execução no script de start

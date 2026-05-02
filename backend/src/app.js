@@ -1,4 +1,6 @@
 import express from "express";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { authRouter } from "./routes/auth.js";
 import { adminCompaniesRouter } from "./routes/admin-companies.js";
 import { adminUsersRouter } from "./routes/admin-users.js";
@@ -22,6 +24,12 @@ export function createApp(messageGateway = null) {
   app.use(requestLogger);
   app.use(securityHeaders);
   app.use(express.json());
+
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const frontendPath = path.join(__dirname, "../../frontend/dist");
+
+  app.use(express.static(frontendPath));
 
   app.get("/health", (_req, res) => {
     res.json({
@@ -49,6 +57,13 @@ export function createApp(messageGateway = null) {
   app.use((error, _req, res, _next) => {
     console.error("[backend] unhandled error", error);
     res.status(500).json({ error: "Internal server error" });
+  });
+
+  // Fallback para SPA (Vite)
+  app.get("*", (req, res) => {
+    if (!req.path.startsWith("/api/")) {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    }
   });
 
   return app;
