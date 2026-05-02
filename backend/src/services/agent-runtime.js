@@ -1,7 +1,7 @@
 import { buildContextPacket } from "./context-router.js";
 import { callOpenClaw } from "./openclaw-client.js";
 import { synthesizeSpeech } from "./tts-service.js";
-import { memoryStore } from "../store/memory-store.js";
+import { prismaStore as appStore } from "../store/prisma-store.js";
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,11 +13,10 @@ export async function runMockAgentFlow({
   triggeringMessage,
   emitToRoom
 }) {
-  const agents = memoryStore
-    .getConversationAgents(roomType, roomId)
-    .map((entry) => memoryStore.listAgents().find((agent) => agent.id === entry.id))
-    .filter(Boolean)
-    .filter((agent) => agent.is_active);
+  const participants = await appStore.getConversationAgents(roomType, roomId);
+  const agents = (await Promise.all(
+    participants.map((entry) => appStore.findAgentById(entry.id))
+  )).filter(Boolean).filter((agent) => agent.is_active);
 
   for (const agent of agents) {
     emitToRoom("agent_typing", {
@@ -40,7 +39,7 @@ export async function runMockAgentFlow({
       context: contextPacket.context
     });
 
-    memoryStore.createOpenclawLog({
+    await appStore.createOpenclawLog({
       agent_id: agent.id,
       conversation_type: roomType,
       conversation_id: roomId,
@@ -54,7 +53,7 @@ export async function runMockAgentFlow({
       error_code: providerResponse.error_code
     });
 
-    const responseMessage = memoryStore.createMessage({
+    const responseMessage = await appStore.createMessage({
       conversationId: roomId,
       conversationType: roomType,
       senderType: "agent",
@@ -63,16 +62,18 @@ export async function runMockAgentFlow({
       status: providerResponse.status === "success" ? "sent" : providerResponse.status
     });
 
-    emitToRoom("message_received", hydrateMessageForEvent(responseMessage));
+    emitToRoom("message_received", await hydrateMessageForEvent(responseMessage));
+
+    const settings = await appStore.getSystemSettings();
 
     if (
       providerResponse.status === "success" &&
-      memoryStore.getSystemSettings().tts_enabled &&
+      settings.tts_enabled &&
       agent.tts_enabled
     ) {
       await delay(120);
       const synthesized = await synthesizeSpeech({ messageId: responseMessage.id });
-      memoryStore.updateMessage(responseMessage.id, {
+      await appStore.updateMessage(responseMessage.id, {
         tts_audio_url: synthesized.audioUrl
       });
       emitToRoom("message_updated", {
@@ -93,18 +94,17 @@ export async function runMockAgentFlow({
   }
 }
 
-export function hydrateMessageForEvent(message) {
+export async function hydrateMessageForEvent(message) {
   let senderName = "Sistema";
 
   if (message.sender_type === "user") {
-    senderName =
-      memoryStore.findUserById(message.sender_id)?.name ?? "Usuario removido";
+    const user = await appStore.findUserById(message.sender_id);
+    senderName = user?.name ?? "Usuario removido";
   }
 
   if (message.sender_type === "agent") {
-    senderName =
-      memoryStore.listAgents().find((agent) => agent.id === message.sender_id)?.name ??
-      "Agente";
+    const agent = await appStore.findAgentById(message.sender_id);
+    senderName = agent?.name ?? "Agente";
   }
 
   return {

@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { authenticate } from "../middleware/authenticate.js";
-import { memoryStore } from "../store/memory-store.js";
+import { prismaStore as appStore } from "../store/prisma-store.js";
 
 export const bootstrapRouter = Router();
 
 bootstrapRouter.use(authenticate);
 
-bootstrapRouter.get("/", (req, res) => {
+bootstrapRouter.get("/", async (req, res) => {
   res.json({
     me: {
       id: req.user.id,
@@ -14,6 +14,6 @@ bootstrapRouter.get("/", (req, res) => {
       email: req.user.email,
       role: req.user.role
     },
-    ...memoryStore.getConversationSnapshotForUser(req.user.id)
+    ...(await appStore.getConversationSnapshotForUser(req.user.id))
   });
 });

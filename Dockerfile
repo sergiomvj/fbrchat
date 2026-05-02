@@ -17,4 +17,7 @@ COPY backend/ .
 # Porta padrão do FBR Chat backend
 EXPOSE 3000
 
-CMD ["npm", "start"]
+# Garantir permissão de execução no script de start
+RUN chmod +x scripts/start.sh
+
+CMD ["./scripts/start.sh"]

@@ -1,4 +1,4 @@
-import { memoryStore } from "../store/memory-store.js";
+import { prismaStore as appStore } from "../store/prisma-store.js";
 import { hydrateMessageForEvent, runMockAgentFlow } from "../services/agent-runtime.js";
 import { transcribeAudio } from "../services/stt-service.js";
 
@@ -7,9 +7,9 @@ export function createMessageGateway(io) {
     io.to(`${roomType}:${roomId}`).emit(event, payload);
   }
 
-  function assertRoomAccess(userId, roomType, roomId) {
+  async function assertRoomAccess(userId, roomType, roomId) {
     if (roomType === "group") {
-      if (!memoryStore.userCanAccessGroup(userId, roomId)) {
+      if (!(await appStore.userCanAccessGroup(userId, roomId))) {
         throw new Error("Group access denied");
       }
 
@@ -17,7 +17,7 @@ export function createMessageGateway(io) {
     }
 
     if (roomType === "pvt") {
-      if (!memoryStore.userCanAccessPvt(userId, roomId)) {
+      if (!(await appStore.userCanAccessPvt(userId, roomId))) {
         throw new Error("PVT access denied");
       }
 
@@ -35,9 +35,9 @@ export function createMessageGateway(io) {
     mediaUrl,
     mediaType
   }) {
-    assertRoomAccess(userId, roomType, roomId);
+    await assertRoomAccess(userId, roomType, roomId);
 
-    const message = memoryStore.createMessage({
+    const message = await appStore.createMessage({
       conversationId: roomId,
       conversationType: roomType,
       senderType: "user",
@@ -48,16 +48,23 @@ export function createMessageGateway(io) {
       transcription: null
     });
 
-    if (mediaType === "audio" && memoryStore.getSystemSettings().stt_enabled) {
+    const settings = await appStore.getSystemSettings();
+
+    if (mediaType === "audio" && settings.stt_enabled) {
       const sttResult = await transcribeAudio({ mediaUrl });
-      memoryStore.updateMessage(message.id, {
+      await appStore.updateMessage(message.id, {
         transcription: sttResult.transcription
       });
     }
 
-    const hydratedMessage = hydrateMessageForEvent(
-      memoryStore.messages.find((entry) => entry.id === message.id) ?? message
-    );
+    // Refresh message from DB after potential updates
+    const currentMessage = await appStore.messages.find ? await appStore.messages.find((entry) => entry.id === message.id) : (await prisma.message.findUnique({ where: { id: message.id } }));
+    // Nota: prismaStore.messages não existe, vou usar o método de busca se implementado ou o próprio objeto retornado.
+    // Como prismaStore.createMessage retorna o objeto, podemos usar ele.
+    
+    const dbMessage = (await appStore.listMessages({ conversationType: roomType, conversationId: roomId, limit: 100 })).find(m => m.id === message.id) || message;
+
+    const hydratedMessage = await hydrateMessageForEvent(dbMessage);
     emitToRoom(roomType, roomId, "message_received", hydratedMessage);
 
     if (mediaType === "audio") {
@@ -65,8 +72,7 @@ export function createMessageGateway(io) {
         message_id: message.id,
         room_id: roomId,
         room_type: roomType,
-        transcription:
-          memoryStore.messages.find((entry) => entry.id === message.id)?.transcription ?? null,
+        transcription: dbMessage.transcription ?? null,
         tts_audio_url: null,
         status: "sent"
       });
@@ -75,11 +81,11 @@ export function createMessageGateway(io) {
     await runMockAgentFlow({
       roomType,
       roomId,
-      triggeringMessage: message,
+      triggeringMessage: dbMessage,
       emitToRoom: (event, payload) => emitToRoom(roomType, roomId, event, payload)
     });
 
-    return memoryStore.messages.find((entry) => entry.id === message.id) ?? message;
+    return dbMessage;
   }
 
   return {

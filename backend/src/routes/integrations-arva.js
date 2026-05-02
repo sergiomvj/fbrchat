@@ -5,13 +5,13 @@ import {
   normalizeArvaAgentPayload,
   validateNormalizedArvaAgentPayload
 } from "../services/arva-agent-sync.js";
-import { memoryStore } from "../store/memory-store.js";
+import { prismaStore as appStore } from "../store/prisma-store.js";
 
 export const integrationsArvaRouter = Router();
 
 integrationsArvaRouter.use(authenticateArva);
 
-integrationsArvaRouter.post("/agents/upsert", (req, res) => {
+integrationsArvaRouter.post("/agents/upsert", async (req, res) => {
   const normalizedPayload = normalizeArvaAgentPayload(req.body ?? {});
 
   if (!validateNormalizedArvaAgentPayload(normalizedPayload)) {
@@ -21,15 +21,14 @@ integrationsArvaRouter.post("/agents/upsert", (req, res) => {
   const agentPayload = mapNormalizedPayloadToAgent(normalizedPayload);
   const { fbrchat_id } = normalizedPayload;
 
-  const conflictingSlug = memoryStore
-    .listAgents()
-    .find((agent) => agent.slug === agentPayload.slug && agent.id !== fbrchat_id);
+  const agents = await appStore.listAgents();
+  const conflictingSlug = agents.find((agent) => agent.slug === agentPayload.slug && agent.id !== fbrchat_id);
 
   if (conflictingSlug) {
     return res.status(409).json({ error: "Slug ja cadastrado" });
   }
 
-  const result = memoryStore.upsertAgentFromArva(agentPayload);
+  const result = await appStore.upsertAgentFromArva(agentPayload);
 
   return res.json({
     agent_id: result.agent.id,
@@ -37,24 +36,24 @@ integrationsArvaRouter.post("/agents/upsert", (req, res) => {
   });
 });
 
-integrationsArvaRouter.post("/chat/open", (req, res) => {
+integrationsArvaRouter.post("/chat/open", async (req, res) => {
   const { fbrchat_id, human_user_id } = req.body ?? {};
 
   if (!fbrchat_id || !human_user_id) {
     return res.status(400).json({ error: "fbrchat_id e human_user_id sao obrigatorios" });
   }
 
-  const agent = memoryStore.findAgentById(fbrchat_id);
+  const agent = await appStore.findAgentById(fbrchat_id);
   if (!agent || !agent.is_active) {
     return res.status(404).json({ error: "Agent not found" });
   }
 
-  const user = memoryStore.findUserById(human_user_id);
+  const user = await appStore.findUserById(human_user_id);
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
 
-  const result = memoryStore.createOrGetPvt(user.id, "agent", agent.id);
+  const result = await appStore.createOrGetPvt(user.id, "agent", agent.id);
 
   return res.json({
     agent_id: agent.id,

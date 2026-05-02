@@ -7,7 +7,7 @@ import {
   resolveAgentFromArvaById,
   validateNormalizedArvaAgentPayload
 } from "../services/arva-agent-sync.js";
-import { memoryStore } from "../store/memory-store.js";
+import { prismaStore as appStore } from "../store/prisma-store.js";
 
 function slugifyAgentId(value) {
   return value
@@ -17,10 +17,11 @@ function slugifyAgentId(value) {
     .slice(0, 50);
 }
 
-function createQuickIncludePayload(fbrchatId) {
+async function createQuickIncludePayload(fbrchatId) {
+  const companies = await appStore.listCompanies();
   const preferredCompany =
-    memoryStore.findCompanyBySlug("fbr-holding") ??
-    memoryStore.listCompanies().find((company) => company.is_active);
+    companies.find(c => c.slug === "fbr-holding") ??
+    companies.find((company) => company.is_active);
 
   if (!preferredCompany) {
     return null;
@@ -51,8 +52,8 @@ function createQuickIncludePayload(fbrchatId) {
   };
 }
 
-function publicAgent(agent) {
-  const company = memoryStore.findCompanyById(agent.company_id);
+async function publicAgent(agent) {
+  const company = await appStore.findCompanyById(agent.company_id);
 
   return {
     id: agent.id,
@@ -95,22 +96,20 @@ function validateAgentConfig(config) {
   );
 }
 
-adminAgentsRouter.get("/", (_req, res) => {
-  const companyId = _req.query.company_id?.toString();
-  const companySlug = _req.query.company_slug?.toString();
+adminAgentsRouter.get("/", async (req, res) => {
+  const companyId = req.query.company_id?.toString();
+  const companySlug = req.query.company_slug?.toString();
 
-  res.json(
-    memoryStore
-      .listAgentsByCompany({ companyId, companySlug })
-      .map(publicAgent)
-  );
+  const agents = await appStore.listAgentsByCompany({ companyId, companySlug });
+  res.json(await Promise.all(agents.map(publicAgent)));
 });
 
 adminAgentsRouter.post(
   "/",
   validateBody(["name", "slug", "company_id", "openclaw_config"]),
-  (req, res) => {
-    const slugInUse = memoryStore.listAgents().some((agent) => agent.slug === req.body.slug);
+  async (req, res) => {
+    const agents = await appStore.listAgents();
+    const slugInUse = agents.some((agent) => agent.slug === req.body.slug);
 
     if (slugInUse) {
       return res.status(409).json({ error: "Slug ja cadastrado" });
@@ -122,12 +121,12 @@ adminAgentsRouter.post(
       return res.status(400).json({ error: "openclaw_config incompleto" });
     }
 
-    if (!memoryStore.findCompanyById(req.body.company_id)) {
+    if (!(await appStore.findCompanyById(req.body.company_id))) {
       return res.status(400).json({ error: "company_id invalido" });
     }
 
-    const agent = memoryStore.createAgent(req.body);
-    return res.status(201).json(publicAgent(agent));
+    const agent = await appStore.createAgent(req.body);
+    return res.status(201).json(await publicAgent(agent));
   }
 );
 
@@ -141,12 +140,12 @@ adminAgentsRouter.post(
       return res.status(400).json({ error: "fbrchat_id invalido" });
     }
 
-    const existing = memoryStore.findAgentById(fbrchatId);
+    const existing = await appStore.findAgentById(fbrchatId);
 
     if (existing) {
       return res.json({
         status: "existing",
-        agent: publicAgent(existing)
+        agent: await publicAgent(existing)
       });
     }
 
@@ -159,19 +158,18 @@ adminAgentsRouter.post(
         }
 
         const payload = mapNormalizedPayloadToAgent(normalizeArvaAgentPayload(resolvedAgent));
-        const slugInUse = memoryStore
-          .listAgents()
-          .some((agent) => agent.slug === payload.slug && agent.id !== fbrchatId);
+        const agents = await appStore.listAgents();
+        const slugInUse = agents.some((agent) => agent.slug === payload.slug && agent.id !== fbrchatId);
 
         if (slugInUse) {
           return res.status(409).json({ error: "Slug retornado pelo ARVA ja esta em uso" });
         }
 
-        const result = memoryStore.upsertAgentFromArva(payload);
+        const result = await appStore.upsertAgentFromArva(payload);
 
         return res.status(201).json({
           status: result.status,
-          agent: publicAgent(result.agent)
+          agent: await publicAgent(result.agent)
         });
       }
     } catch (error) {
@@ -181,30 +179,29 @@ adminAgentsRouter.post(
       });
     }
 
-    const payload = createQuickIncludePayload(fbrchatId);
+    const payload = await createQuickIncludePayload(fbrchatId);
 
     if (!payload) {
       return res.status(500).json({ error: "Nenhuma empresa ativa disponivel para incluir agente" });
     }
 
-    const slugInUse = memoryStore
-      .listAgents()
-      .some((agent) => agent.slug === payload.slug && agent.id !== fbrchatId);
+    const agents = await appStore.listAgents();
+    const slugInUse = agents.some((agent) => agent.slug === payload.slug && agent.id !== fbrchatId);
 
     if (slugInUse) {
       payload.slug = `${payload.slug.slice(0, 42)}-${Date.now().toString().slice(-6)}`;
     }
 
-    const agent = memoryStore.createAgent(payload);
+    const agent = await appStore.createAgent(payload);
 
     return res.status(201).json({
       status: "created",
-      agent: publicAgent(agent)
+      agent: await publicAgent(agent)
     });
   }
 );
 
-adminAgentsRouter.patch("/:id", (req, res) => {
+adminAgentsRouter.patch("/:id", async (req, res) => {
   if (
     req.body.openclaw_config !== undefined &&
     !validateAgentConfig(req.body.openclaw_config)
@@ -214,26 +211,26 @@ adminAgentsRouter.patch("/:id", (req, res) => {
 
   if (
     req.body.company_id !== undefined &&
-    !memoryStore.findCompanyById(req.body.company_id)
+    !(await appStore.findCompanyById(req.body.company_id))
   ) {
     return res.status(400).json({ error: "company_id invalido" });
   }
 
-  const agent = memoryStore.updateAgent(req.params.id, req.body);
+  const agent = await appStore.updateAgent(req.params.id, req.body);
 
   if (!agent) {
     return res.status(404).json({ error: "Agent not found" });
   }
 
-  return res.json(publicAgent(agent));
+  return res.json(await publicAgent(agent));
 });
 
-adminAgentsRouter.delete("/:id", (req, res) => {
-  const agent = memoryStore.deactivateAgent(req.params.id);
+adminAgentsRouter.delete("/:id", async (req, res) => {
+  const agent = await appStore.deactivateAgent(req.params.id);
 
   if (!agent) {
     return res.status(404).json({ error: "Agent not found" });
   }
 
-  return res.json({ success: true, agent: publicAgent(agent) });
+  return res.json({ success: true, agent: await publicAgent(agent) });
 });
