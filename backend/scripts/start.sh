@@ -2,8 +2,8 @@
 
 set -e
 
-echo "Running migrations..."
-npx prisma migrate deploy
+echo "Syncing database schema..."
+npx prisma db push --accept-data-loss
 
 echo "Running seed..."
 npx prisma db seed
