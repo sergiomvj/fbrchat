@@ -5,8 +5,9 @@ WORKDIR /app
 # Otimizações de produção
 ENV NODE_ENV=production
 
-# Copia os arquivos de dependência do backend
+# Copia os arquivos de dependência do backend e a pasta do Prisma
 COPY backend/package*.json ./
+COPY backend/prisma ./prisma/
 
 # Instala apenas dependências de produção
 RUN npm ci --only=production
