@@ -27,7 +27,9 @@ export function createApp(messageGateway = null) {
 
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const frontendPath = path.join(__dirname, "../../frontend/dist");
+  
+  // No Docker, o backend está na raiz /app, então subimos um nível a partir de src/
+  const frontendPath = path.join(__dirname, "../frontend/dist");
 
   app.use(express.static(frontendPath));
 
